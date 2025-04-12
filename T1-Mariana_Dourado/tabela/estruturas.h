@@ -1,0 +1,1 @@
+//um arquivo header (.h) contendo a descricao das estruturas de dados utilizadas e prot´otipos das fun¸c˜oes que manipulam a pilha de tabela de s´ımbolos.

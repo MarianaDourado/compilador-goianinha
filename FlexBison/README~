@@ -1,0 +1,26 @@
+Este diretorio contém arquivos que podem ser utilizados como exemplos para a implementacao do trabalho3.
+O arquivo lex.l e um exemplo de arquivo de entrada para o Flex.
+O arquivo calc.y  contem um exemplo de entrada para o bison. 
+Ele contem a especificacao de uma calculadora muito simples, mas ilustra a iteracao do lexico gerado pelo Flex e o sintatico gerado pelo bison.
+
+calc.y:
+
+Abra o arquivo calc.y: nele vemos uma secao de declaracao de tokens. Quando o calc.y e compilado pelo Bison com a opcao -d, o Bison gera um arquivo de cabecalho (neste exemplo: calc.tab.h) que contem um define para cada token, associando-o a um numero inteiro. Este arquivo é usado como include tanto no lex.l como no calc.y
+Ainda no arquivo calc.y repare que yylex() é decalado como extern, isto porque ela é definida no arquivo lex.yy.c. No final de calc.y tem uma funcao main que abre o arquivo com  o programa fonte e chama a funcao yyparse() que é o analisador sintatico gerado pelo Bison.
+
+Make file:
+abra o Makefile
+
+veja como ele foi escrito. É facil adapta-lo para implementar o trabalho3. Basta substituir todas as ocorrencias de "programaPrincipal" por "cezinho", substituir "calc.y" pelo arquivo que voce criou de nome "cezinho.y", substituir "lex.l" por "cezinho.l". No seu "cezinho.l" voce tera que fazer include do arquivo de cabecalho gerado pelo bison na linha
+bizon -d cezinho.y do Makefile.
+
+Quando terminar o trabalho, apenas faca: "make tgz", para gerar o arquivo tar compactado.
+Envie para o professor este arquivo.
+
+
+Para testar o programa de exemplo faça o seguites passos:
+
+1) make
+2) ./programaPrincipal calcTeste.txt
+
+Bom trabalho e bons estudos.

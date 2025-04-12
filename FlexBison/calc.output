@@ -1,0 +1,237 @@
+Terminais que não foram usados
+
+   WHITESPACE
+
+
+Gramática
+
+    0 $accept: linha $end
+
+    1 linha: expr
+
+    2 expr: expr MAIS term
+    3     | expr MENOS term
+    4     | term
+
+    5 term: term MULT factor
+    6     | term DIV factor
+    7     | factor
+
+    8 factor: /* vazio */
+    9       | ABREPAREN expr FECHAPAREN
+   10       | NUMERO
+
+
+Terminais, com as regras onde eles aparecem
+
+$end (0) 0
+error (256)
+WHITESPACE (258)
+NUMERO (259) 10
+MENOS (260) 3
+MAIS (261) 2
+DIV (262) 6
+MULT (263) 5
+ABREPAREN (264) 9
+FECHAPAREN (265) 9
+
+
+Não-terminais com as regras onde eles aparecem
+
+$accept (11)
+    à esquerda: 0
+linha (12)
+    à esquerda: 1, à direita: 0
+expr (13)
+    à esquerda: 2 3 4, à direita: 1 2 3 9
+term (14)
+    à esquerda: 5 6 7, à direita: 2 3 4 5 6
+factor (15)
+    à esquerda: 8 9 10, à direita: 5 6 7
+
+
+estado 0
+
+    0 $accept: . linha $end
+
+    NUMERO     deslocar, e ir ao estado 1
+    ABREPAREN  deslocar, e ir ao estado 2
+
+    $padrão  reduzir usando a regra 8 (factor)
+
+    linha   ir ao estado 3
+    expr    ir ao estado 4
+    term    ir ao estado 5
+    factor  ir ao estado 6
+
+
+estado 1
+
+   10 factor: NUMERO .
+
+    $padrão  reduzir usando a regra 10 (factor)
+
+
+estado 2
+
+    9 factor: ABREPAREN . expr FECHAPAREN
+
+    NUMERO     deslocar, e ir ao estado 1
+    ABREPAREN  deslocar, e ir ao estado 2
+
+    $padrão  reduzir usando a regra 8 (factor)
+
+    expr    ir ao estado 7
+    term    ir ao estado 5
+    factor  ir ao estado 6
+
+
+estado 3
+
+    0 $accept: linha . $end
+
+    $end  deslocar, e ir ao estado 8
+
+
+estado 4
+
+    1 linha: expr .
+    2 expr: expr . MAIS term
+    3     | expr . MENOS term
+
+    MENOS  deslocar, e ir ao estado 9
+    MAIS   deslocar, e ir ao estado 10
+
+    $padrão  reduzir usando a regra 1 (linha)
+
+
+estado 5
+
+    4 expr: term .
+    5 term: term . MULT factor
+    6     | term . DIV factor
+
+    DIV   deslocar, e ir ao estado 11
+    MULT  deslocar, e ir ao estado 12
+
+    $padrão  reduzir usando a regra 4 (expr)
+
+
+estado 6
+
+    7 term: factor .
+
+    $padrão  reduzir usando a regra 7 (term)
+
+
+estado 7
+
+    2 expr: expr . MAIS term
+    3     | expr . MENOS term
+    9 factor: ABREPAREN expr . FECHAPAREN
+
+    MENOS       deslocar, e ir ao estado 9
+    MAIS        deslocar, e ir ao estado 10
+    FECHAPAREN  deslocar, e ir ao estado 13
+
+
+estado 8
+
+    0 $accept: linha $end .
+
+    $padrão  aceitar
+
+
+estado 9
+
+    3 expr: expr MENOS . term
+
+    NUMERO     deslocar, e ir ao estado 1
+    ABREPAREN  deslocar, e ir ao estado 2
+
+    $padrão  reduzir usando a regra 8 (factor)
+
+    term    ir ao estado 14
+    factor  ir ao estado 6
+
+
+estado 10
+
+    2 expr: expr MAIS . term
+
+    NUMERO     deslocar, e ir ao estado 1
+    ABREPAREN  deslocar, e ir ao estado 2
+
+    $padrão  reduzir usando a regra 8 (factor)
+
+    term    ir ao estado 15
+    factor  ir ao estado 6
+
+
+estado 11
+
+    6 term: term DIV . factor
+
+    NUMERO     deslocar, e ir ao estado 1
+    ABREPAREN  deslocar, e ir ao estado 2
+
+    $padrão  reduzir usando a regra 8 (factor)
+
+    factor  ir ao estado 16
+
+
+estado 12
+
+    5 term: term MULT . factor
+
+    NUMERO     deslocar, e ir ao estado 1
+    ABREPAREN  deslocar, e ir ao estado 2
+
+    $padrão  reduzir usando a regra 8 (factor)
+
+    factor  ir ao estado 17
+
+
+estado 13
+
+    9 factor: ABREPAREN expr FECHAPAREN .
+
+    $padrão  reduzir usando a regra 9 (factor)
+
+
+estado 14
+
+    3 expr: expr MENOS term .
+    5 term: term . MULT factor
+    6     | term . DIV factor
+
+    DIV   deslocar, e ir ao estado 11
+    MULT  deslocar, e ir ao estado 12
+
+    $padrão  reduzir usando a regra 3 (expr)
+
+
+estado 15
+
+    2 expr: expr MAIS term .
+    5 term: term . MULT factor
+    6     | term . DIV factor
+
+    DIV   deslocar, e ir ao estado 11
+    MULT  deslocar, e ir ao estado 12
+
+    $padrão  reduzir usando a regra 2 (expr)
+
+
+estado 16
+
+    6 term: term DIV factor .
+
+    $padrão  reduzir usando a regra 6 (term)
+
+
+estado 17
+
+    5 term: term MULT factor .
+
+    $padrão  reduzir usando a regra 5 (term)
