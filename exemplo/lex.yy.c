@@ -438,8 +438,8 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "media.l"
 #line 2 "media.l"
-    #include<bits/stdc++.h>
-    using namespace std;
+    #include<stdio.h>
+    #include<stdlib.h>
 #line 444 "lex.yy.c"
 #line 445 "lex.yy.c"
 
@@ -1740,6 +1740,6 @@ int main(){
         total += val;
         n++;
     }
-    if(n>0) cout << "media = " << total/n << "\n";
+    if(n>0) printf("media = %d\n", total/n);
     return 0;
 }

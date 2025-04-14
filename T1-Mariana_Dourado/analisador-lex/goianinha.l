@@ -20,7 +20,7 @@
 #define EXECUTE       12
 #define INTCONST      13
 #define CARCONST      14
-#define STRING        15
+#define CONSTSTRING   15
 #define ID            16
 #define EQ            17
 #define NEQ           18
@@ -43,21 +43,22 @@
 #define VIRGULA       35
 #define PONTOVIRG     36
 
-extern int yylineno = 1;
-extern char* yytext;
-
-%x COMENTARIO
+extern int yylineno;
 
 %}
+
+%option noyywrap
+
+%x COMENTARIO
 
 WHITESPACE [\t' '\r] 
 
 DIGITO [0-9]
 LETRA [a-zA-Z]
 ID ({LETRA}|_)({LETRA}|{DIGITO}|_)*
-INTCONST {DIGIT}+
+INTCONST {DIGITO}+
 CARCONST \'([^\'\n\\]|\\.)\'
-STRING \"([^\"\n\\]|\\.)*\"
+CONSTSTRING \"([^\"\n\\]|\\.)*\"
 
 %%
 
@@ -104,28 +105,32 @@ STRING \"([^\"\n\\]|\\.)*\"
 
 {INTCONST}    { return INTCONST; }
 {CARCONST}    { return CARCONST; }
-{STRING}      { return STRING; }
+{CONSTSTRING}      { return CONSTSTRING; }
 {ID}          { return ID; }
 
 "/*"          { BEGIN(COMENTARIO); }
 
 \n            { yylineno++; }
 
-<<EOF>>       { return END_OF_FILE; }
 
-
-<COMENTARIO> {
+<COMENTARIO>{
     "*/"      {BEGIN(INITIAL); }
     \n        {yylineno++;}
     .         {/* outros caracteres*/ }
 }
 
-<COMENTARIO><<EOF>> {
-    printf("ERRO: COMENTÁRIO NÃO TERMINA %d", yylineno);
+
+<<EOF>>       {
+    if(YY_START == COMENTARIO){
+        printf("ERRO: COMENTÁRIO NÃO TERMINA %d\n", yylineno);
+        exit(1);
+    }
+    return END_OF_FILE;
 }
 
-{STRING}\n {
-    print("ERRO: CADEIA DE CARACTERES OCUPA MAIS DE UMA LINHA %d\n", yylineno);
+
+\"([^\"\n\\]|\\.)*\n {
+    printf("ERRO: CADEIA DE CARACTERES OCUPA MAIS DE UMA LINHA %d\n", yylineno);
     exit(1);
 }
 
@@ -135,9 +140,3 @@ STRING \"([^\"\n\\]|\\.)*\"
 }
 
 %%
-
-int yywrap();
-
-int yywrap(){
-    return 1;
-}

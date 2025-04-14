@@ -6,7 +6,7 @@
 #define TIPO_CHAR 2
 
 int main() {
-    initSymbolTableStack();
+    initPilhaTabelaSimbolos();
     
     printf("Criando escopo global...\n");
     pushTabelaSimbolos();
@@ -22,13 +22,13 @@ int main() {
     printf("Criando escopo para função 'f'\n");
     // função 'f' com 2 parâmetros e tipo de retorno INT (1)
     int numParams = 2;
-    Simbolo *simboloFuncao = insereFuncao("f", numParams, TIPO_INT);
+    Simbolo *simboloFuncaof = insereFuncao("f", numParams, TIPO_INT);
     pushTabelaSimbolos();
     
     // TESTE 3 - INSERIR PARÂMETROS
     printf("Inserindo parâmetros 'p' (int) e 'q' (char) para a função 'f'\n");
-    insereParametro("p", TIPO_INT, 1, simboloFuncao);
-    insereParametro("q", TIPO_CHAR, 2, simboloFuncao);
+    insereParametro("p", TIPO_INT, 1, simboloFuncaof);
+    insereParametro("q", TIPO_CHAR, 2, simboloFuncaof);
 
     // TESTE 4 - INSERIR VARIAVEL DENTRO DA FUNÇÃO E PROCURAR
     printf("Inserindo variável 'y' no escopo da função 'f'...\n");
@@ -42,7 +42,7 @@ int main() {
         printf("Símbolo 'y' não encontrado (isso é um erro).\n");
     
     // TESTE 5 - PROCURAR POR VARIÁVEL NO ESCOPO GLOBAL, ESTANDO EM 'f'
-    Simbolo *procura;
+    // Simbolo *procura;
     procura = procuraSimbolo("x");
     if(procura)
         printf("Símbolo '%s' (x) encontrado no escopo (global).\n", procura->nome);
@@ -75,7 +75,7 @@ int main() {
         printf("Símbolo 'y' não encontrado, conforme esperado, pois o escopo foi removido.\n");
 
     // TESTE 10 - PROCURAR POR VARIÁVEL NO ESCOPO GLOBAL, ESTANDO NO ESCOPO GLOBAL
-    Simbolo *procura;
+    // Simbolo *procura;
     procura = procuraSimbolo("outro_x");
     if(procura)
         printf("Símbolo '%s' (outro_x) encontrado no escopo (global).\n", procura->nome);
@@ -84,12 +84,12 @@ int main() {
     
     // TESTE 11 - INSERIR FUNÇÃO 'g' COM PARAMETRO 'x' DO TIPO CHAR E PROCURAR 'x'
     printf("Criando escopo para função 'g'\n");
-    int numParams = 1;
-    Simbolo *simboloFuncao = insereFuncao("g", numParams, TIPO_CHAR);
+    numParams = 1;
+    Simbolo *simboloFuncaog = insereFuncao("g", numParams, TIPO_CHAR);
     pushTabelaSimbolos();
     
     printf("Inserindo parâmetro 'x' (char) dentro do escopo da função 'g'\n");
-    insereParametro("x", TIPO_CHAR, 1, simboloFuncao);
+    insereParametro("x", TIPO_CHAR, 1, simboloFuncaog);
 
     procura = procuraSimbolo("x");
     if(procura && procura->tipoDado==TIPO_CHAR)
@@ -106,7 +106,7 @@ int main() {
     printf("Finalizando escopo global...\n");
     popTabelaSimbolos();
     
-    destroySymbolTableStack();
+    destroiPilhaTabelaSimbolos();
     
     return 0;
 }

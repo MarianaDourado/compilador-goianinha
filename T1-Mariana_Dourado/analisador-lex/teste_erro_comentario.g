@@ -1,6 +1,6 @@
 programa {
-    int x;
+    int x1;
     /* Comentário 
-    Pode ignorar. */
+    Não acaba.
     escreva "Hello, World!";
 }

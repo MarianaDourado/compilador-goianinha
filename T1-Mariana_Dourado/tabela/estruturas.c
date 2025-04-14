@@ -27,8 +27,7 @@ Simbolo *procuraSimbolo(const char *nome){
     while(tabela){
         Simbolo *simboloAtual = tabela->simbolos;
         while(simboloAtual){
-            if(strcmp(simboloAtual->nome, nome) == 0)
-                return simboloAtual;
+            if(strcmp(simboloAtual->nome, nome) == 0) return simboloAtual;
             simboloAtual = simboloAtual->prox;
         }
         tabela = tabela->prox;
@@ -37,15 +36,13 @@ Simbolo *procuraSimbolo(const char *nome){
 }
 
 void popTabelaSimbolos(){
-    if(PilhaTabelaSimbolos == NULL)
-        return;
+    if(PilhaTabelaSimbolos == NULL) return;
     TabelaSimbolos *top = PilhaTabelaSimbolos;
     Simbolo *simboloAtual = top->simbolos;
     while(simboloAtual){
         Simbolo *temp = simboloAtual;
         simboloAtual = simboloAtual->prox;
-        free(temp->nome);
-        free(temp);
+        free(temp->nome); free(temp);
     }
     PilhaTabelaSimbolos = top->prox;
     free(top);
@@ -101,7 +98,5 @@ Simbolo *insereParametro(const char *nome, int tipoDado, unsigned int posicao, S
 }
 
 void destroiPilhaTabelaSimbolos(){
-    while(PilhaTabelaSimbolos){
-        popTabelaSimbolos();
-    }
+    while(PilhaTabelaSimbolos) popTabelaSimbolos();
 }

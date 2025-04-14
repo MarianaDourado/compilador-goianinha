@@ -1,4 +1,4 @@
-// O código do falso sintático 
+/* O código do falso sintático */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,7 +7,7 @@
 extern int yylex();
 extern char* yytext; /* Variavel global definida em lex.yy.c para armazenar o lexema do token 
                          após uma chamada a yylex() */
-FILE * yyin;         /* Variavel utilizada por yylex como arquivo de entrada*/
+extern FILE * yyin;  /* Variavel utilizada por yylex como arquivo de entrada*/
 extern int yylineno;
 
 int main(int argc, char** argv){
@@ -18,7 +18,7 @@ int main(int argc, char** argv){
      yyin=fopen( argv[1], "r" );
      int token= yylex();  
      while(token != -1){
-          printf("Encontrado o lexema %s pertencente ao token de código %d linha %d", yytext, token, yylineno);
+          printf("Encontrado o lexema %s pertencente ao token de código %d linha %d\n", yytext, token, yylineno);
           token=yylex();
      }
 

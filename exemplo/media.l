@@ -1,6 +1,6 @@
 %{
-    #include<bits/stdc++.h>
-    using namespace std;
+    #include<stdio.h>
+    #include<stdlib.h>
 %}
 dgt [0-9]
 %%
@@ -12,6 +12,6 @@ int main(){
         total += val;
         n++;
     }
-    if(n>0) cout << "media = " << total/n << "\n";
+    if(n>0) printf("media = %d\n", total/n);
     return 0;
 }
