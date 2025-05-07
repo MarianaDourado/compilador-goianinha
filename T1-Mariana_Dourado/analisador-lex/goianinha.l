@@ -1,55 +1,17 @@
-/*O código de entrada para o gerador de analisador léxico utilizado*/
+/* O c´odigo de entrada para o gerador de analisador l´exico utilizado */
+/* goianinha.l – especificação do analisador léxico (Flex) */
 
 %{
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#define END_OF_FILE   -1
-#define PROGRAMA       1
-#define CAR            2
-#define INT            3
-#define RETORNE        4
-#define LEIA           5
-#define ESCREVA        6
-#define NOVALINHA      7
-#define SE             8
-#define ENTAO          9
-#define SENAO         10
-#define ENQUANTO      11
-#define EXECUTE       12
-#define INTCONST      13
-#define CARCONST      14
-#define CONSTSTRING   15
-#define ID            16
-#define EQ            17
-#define NEQ           18
-#define NEG           19
-#define LEQ           20
-#define GEQ           21
-#define MENOR         22
-#define MAIOR         23
-#define MAIS          24
-#define MENOS         25
-#define VEZES         26
-#define DIVIDE        27
-#define E             28
-#define OU            29
-#define RECEBE        30
-#define ABREPARENT    31
-#define FECHAPARENT   32
-#define ABRECHAVE     33
-#define FECHACHAVE    34
-#define VIRGULA       35
-#define PONTOVIRG     36
+#include "goianinha.tab.h"
 
 extern int yylineno;
 
 %}
 
 %option noyywrap
-
-%x COMENTARIO
 
 WHITESPACE [\t' '\r] 
 
@@ -59,6 +21,8 @@ ID ({LETRA}|_)({LETRA}|{DIGITO}|_)*
 INTCONST {DIGITO}+
 CARCONST \'([^\'\n\\]|\\.)\'
 CONSTSTRING \"([^\"\n\\]|\\.)*\"
+
+%x COMENTARIO
 
 %%
 
@@ -103,10 +67,10 @@ CONSTSTRING \"([^\"\n\\]|\\.)*\"
 ","           { return VIRGULA; }
 ";"           { return PONTOVIRG; }
 
-{INTCONST}    { return INTCONST; }
-{CARCONST}    { return CARCONST; }
-{CONSTSTRING}      { return CONSTSTRING; }
-{ID}          { return ID; }
+{ID}          { yylval.string = strdup(yytext); return ID; }
+{INTCONST}    { yylval.intval = atoi(yytext); return INTCONST; }
+{CARCONST}    { yylval.charval = yytext[1]; return CARCONST; }
+{CONSTSTRING} { yylval.string = strdup(yytext); return CONSTSTRING; }
 
 "/*"          { BEGIN(COMENTARIO); }
 
