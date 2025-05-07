@@ -1,0 +1,23 @@
+#Substitua o valor de CC com o nome do compilador que voce usa: gcc ou g++
+CC = gcc
+CFLAGS =   -g  -Wall 
+LFLAGS = -lm
+
+# 
+
+main:    tabelaSimbolos.o main.o 
+	$(CC) $(CFLAGS) $(LFLAGS) tabelaSimbolos.o main.o -o  main
+
+
+main.o: main.c
+	$(CC) $(CFLAGS) $(FLAGS) -c main.c -o main.o
+                
+
+tabelaSimbolos.o: tabelaSimbolos.c
+	$(CC) $(CFLAGS) -c tabelaSimbolos.c -o tabelaSimbolos.o
+
+clean:
+	rm -f     *.o    main
+
+cleanObj:
+	rm -f   *.o  

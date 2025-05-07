@@ -1,0 +1,54 @@
+# Comandos de execu¸c˜ao do gerador de analisador l´exico (Flex ou JFlex) para convers˜ao do arquivo de entrada do gerador de analisador l´exico em programas em C.
+# – Comandos de execu¸c˜ao do gerador de analisador sint´atico (YACC ou Bison) para
+# convers˜ao do arquivo de entrada do gerador de analisador sint´atico.
+# – Comandos de compila¸c˜ao e link-edi¸c˜ao para compilar e ligar o programa principal
+# com os c´odigos dos analisadores l´exicos e sint´aticos gerados.
+CC = gcc
+CFLAGS =   -g  -Wall -ansi
+LFLAGS = -lfl -lm
+
+
+goianinha:   goianinha.o  main.o
+	$(CC) $(CFLAGS) $(LFLAGS) goianinha.o main.o -o goianinha
+
+main.o: main.c
+	$(CC) $(CFLAGS) -c main.c -o main.o
+
+lex.yy.c: goianinha.l
+	flex goianinha.l
+
+goianinha.o: lex.yy.c  
+	$(CC) $(CFLAGS) -c lex.yy.c -o goianinha.o
+
+clean:
+	rm -f   *.o    goianinha
+	
+cleanObj:
+	rm -f   *.o
+
+tgz: 
+	rm -f *.o rm goianinha *.tgz 
+	tar -zcvf Lexico.tgz *
+	echo "O arquivo Lexico.tgz com os fontes e Makefile foi gerado. Pode ser enviado."	
+
+# GPT ditou: ------------------------------------------------------------------------
+# Makefile para gerar, compilar e linkar o compilador Goianinha
+
+CC      = gcc
+LEX     = flex
+YACC    = bison -d
+CFLAGS  = -Wall -g
+
+all: goianinha
+
+lex.yy.c: goianinha.l
+	$(LEX) goianinha.l
+
+goianinha.tab.c goianinha.tab.h: goianinha.y
+	$(YACC) goianinha.y
+
+goianinha: lex.yy.c goianinha.tab.c goianinha.tab.h
+	$(CC) $(CFLAGS) -o $@ lex.yy.c goianinha.tab.c -lfl
+
+clean:
+	rm -f lex.yy.c goianinha.tab.c goianinha.tab.h goianinha

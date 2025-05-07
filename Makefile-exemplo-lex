@@ -1,0 +1,40 @@
+#Substitua o valor de CC com o nome do compilador que voce usa: gcc ou g++
+CC = gcc
+CFLAGS =   -g  -Wall -ansi
+LFLAGS = -lm
+
+# O arquivo  executavel goianinha depende de lexico.o e main.o. Uma vez obtidos estes arquivos eles sao "linkados"
+# gerando o executavel goianinha
+
+goianinha:    main.o lexico.o
+	$(CC) $(CFLAGS) $(LFLAGS) lexico.o main.o -o  goianinha
+                
+# main.o depende de main.c ( o "falso sintatico")
+main.o: main.c
+	$(CC) $(CFLAGS) -c main.c -o main.o
+
+# lexico.o é o programa objeto gerado a partir da compilacao do arquivo lexico.c 
+# gerado pelo Flex. Sempre que o 
+# arquivo goianinha.l for editado, um novo lexico.c deve ser gerado usando o Flex e em seguida, 
+# o novo lexico.c deve ser
+# compilado para gerara o novo lexico.o. Entao lexico.c depende de goianinha.l e lexico.o 
+# depende de lexico.c.
+
+lexico.c: goianinha.l
+	flex  --yylineno --outfile=lexico.c goianinha.l 
+
+lexico.o: lexico.c  
+	$(CC) $(CFLAGS) -c lexico.c   -o lexico.o
+
+
+
+
+# Se na linha de comando voce digitar: make clean, os arquivo objetos (.o) e o executavel (goianinha)
+# serao apagados. Isto é util quando for submeter a versao final do trabalho para o professor, antes de fazer
+# make tgz
+clean:
+	rm -f   lexico.c *.o goianinha
+
+cleanObj:
+	rm -f   *.o  
+
