@@ -19,8 +19,8 @@ DIGITO [0-9]
 LETRA [a-zA-Z]
 ID ({LETRA}|_)({LETRA}|{DIGITO}|_)*
 INTCONST {DIGITO}+
-CARCONST \'([^\'\n\\]|\\.)\'
-CONSTSTRING \"([^\"\n\\]|\\.)*\"
+CARCONST \'([^\'\n])\'
+CONSTSTRING \"([^\"\n])*\"
 
 %x COMENTARIO
 
@@ -80,26 +80,26 @@ CONSTSTRING \"([^\"\n\\]|\\.)*\"
 <COMENTARIO>{
     "*/"      {BEGIN(INITIAL); }
     \n        {yylineno++;}
-    .         {/* outros caracteres*/ }
+    .         {/* ignora outros caracteres*/ }
 }
 
 
 <<EOF>>       {
     if(YY_START == COMENTARIO){
-        printf("ERRO: COMENTÁRIO NÃO TERMINA %d\n", yylineno);
+        fprintf(stderr, "ERRO: COMENTÁRIO NÃO TERMINA %d\n", yylineno);
         exit(1);
     }
-    return END_OF_FILE;
+    return 0; // EOF
 }
 
 
 \"([^\"\n\\]|\\.)*\n {
-    printf("ERRO: CADEIA DE CARACTERES OCUPA MAIS DE UMA LINHA %d\n", yylineno);
+    fprintf(stderr, "ERRO: CADEIA DE CARACTERES OCUPA MAIS DE UMA LINHA %d\n", yylineno);
     exit(1);
 }
 
 . {
-    printf("ERRO: CARACTERE INVÁLIDO %d\n", yylineno);
+    fprintf(stderr, "ERRO: CARACTERE INVÁLIDO %d\n", yylineno);
     exit(1);
 }
 

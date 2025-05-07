@@ -1,0 +1,4 @@
+programa {
+  int x  // esqueceu ponto-e-vírgula aqui
+  escreva x;
+}

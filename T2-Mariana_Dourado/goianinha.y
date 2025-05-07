@@ -5,18 +5,28 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-extern int yylex(); // extern mesmo? não devo definir?
+#include "goianinha.tab.h"
+
+extern FILE *yyin;
+extern int yylineno;
 void yyerror(const char *);
+extern int yyparse(); // ta certo?
+extern int yylex(); // extern mesmo? não devo definir?
 %}
-/* 
+
 %union {
     int intval;
     char charval;
     char *string;
-} */
+}
 
 %token PROGRAMA INT CAR LEIA ESCREVA NOVALINHA RETORNE
-%token INTCONST CARCONST ID CADEIACARACTERES
+
+/* %token INTCONST CARCONST ID CONSTSTRING */
+%token <intval> INTCONST
+%token <charval> CARCONST
+%token <string> ID CONSTSTRING
+
 %token SE ENTAO SENAO
 %token ENQUANTO EXECUTE
 %token OU E NEG
@@ -86,7 +96,7 @@ Comando
     | RETORNE Expr PONTOVIRGULA
     | LEIA ID PONTOVIRGULA
     | ESCREVA Expr PONTOVIRGULA
-    | ESCREVA CADEIACARACTERES PONTOVIRGULA
+    | ESCREVA CONSTSTRING PONTOVIRGULA
     | NOVALINHA PONTOVIRGULA
     | SE ABREPARENT Expr FECHAPARENT ENTAO Comando
     | SE ABREPARENT Expr FECHAPARENT ENTAO Comando SENAO Comando
@@ -157,23 +167,31 @@ ListExpr
 
 %%
 
-void yyerror(const char *s) {
+void yyerror(const char *s){
     fprintf(stderr, "ERRO: %s na linha %d\n", s, yylineno);
 }
 
-int main(int argc, char **argv) {
-    if (argc != 2) {
+int main(int argc, char **argv){
+    if(argc != 2){
         fprintf(stderr, "Uso correto: goianinha <arquivo>\n");
         exit(1);
     }
-    // extern FILE *yyin;
-    yyin = fopen(argv[1], "rt");
-    if (!yyin) {
-        yyerror("Erro ao abrir arquivo");
+
+    yyin = fopen(argv[1], "r");
+    if(!yyin){
+        fprintf(stderr, "Erro ao abrir arquivo %s\n", argv[1]);
         exit(1);
     }
-    // mudar isso depois se pá
-    if (yyparse() == 0)
-        printf("Análise sintática concluída com sucesso.\n");
+    
+    // falha
+    if(yyparse() != 0){
+        fprintf(stderr, "Análise sintática falhou.\n");
+        return 1;
+    }
+
+    // sucesso
+    printf("Análise sintática concluída com sucesso.\n");
+    fclose(yyin);
+    return 0;
     //return yyparse();
 }
