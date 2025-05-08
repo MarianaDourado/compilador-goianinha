@@ -5,7 +5,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include "goianinha.tab.h"
+#include "goianinha.sintatico.h"
 
 extern FILE *yyin;
 extern int yylineno;
@@ -190,13 +190,13 @@ int main(int argc, char **argv){
 
     int result = yyparse(); 
     
-    // falha
+    /* falha */
     if(result != 0){
         /* fprintf(stderr, "Análise sintática falhou com código: %d.\n", result); */
         return result;
     }
 
-    // sucesso
+    /* sucesso */
     printf("Análise sintática concluída com sucesso.\n");
     
     fclose(yyin);

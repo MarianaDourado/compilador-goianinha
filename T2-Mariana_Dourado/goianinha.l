@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "goianinha.tab.h"
+#include "goianinha.sintatico.h"
 
 extern int yylineno;
 
@@ -70,7 +70,7 @@ CONSTSTRING \"([^\"\n])*\"
 ";"           { return PONTOVIRGULA; }
 
 {ID}          { yylval.string = strdup(yytext);
-                //fprintf(stderr, "LEX: identificador %s (token %d)\n", yytext, ID); // só pra testar
+                /* fprintf(stderr, "LEX: identificador %s (token %d)\n", yytext, ID); */
                 return ID;
               }
 {INTCONST}    { yylval.intval = atoi(yytext); return INTCONST; }
@@ -91,7 +91,7 @@ CONSTSTRING \"([^\"\n])*\"
         fprintf(stderr, "ERRO: COMENTÁRIO NÃO TERMINA %d\n", yylineno);
         exit(1);
     }
-    return 0; // EOF
+    return 0; /* EOF */
 }
 
 
