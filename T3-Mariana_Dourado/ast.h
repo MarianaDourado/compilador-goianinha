@@ -1,143 +1,84 @@
 #ifndef AST_H
 #define AST_H
 
-// #include "../tabela_simbolos.h"
-// #include "../token.h" // fazer depois se precisar 
+#include <stdio.h>
+#include <stdlib.h>
+
+/*
+ * ASTNode: estrutura genérica de um nó da árvore sintática abstrata.
+ *
+ * Cada nó possui:
+ *   - label: rótulo/descrição do nó (por ex. "Programa", "If", "Expr", "ID", etc).
+ *   - string: usado em nós‐folha que carregam literais ou identificadores (ID, CONSTSTRING).
+ *   - intval: usado em nós‐folha para inteiros (INTCONST).
+ *   - charval: usado em nós‐folha para constantes de caractere (CARCONST).
+ *   - line: número da linha no fonte onde esse nó foi gerado (para mensagens de erro).
+ *   - children: vetor de ponteiros para nós‐filho.
+ *   - nChildren: número de filhos.
+ */
+typedef struct ASTNode {
+    char      *label;
+    char      *string;    /* só válido se esse nó for ID ou CONSTSTRING */
+    int        intval;    /* só válido se esse nó for INTCONST */
+    char       charval;   /* só válido se esse nó for CARCONST */
+    int        line;
+    struct ASTNode **children;
+    int        nChildren;
+} ASTNode;
 
 
-typedef enum {
-  CMD_EXPR,
-  CMD_RETORNE,
-  CMD_LEIA,
-  CMD_ESCREVA,
-  CMD_CADEIACARACTERES,
-  CMD_NOVALINHA,
-  CMD_SE,
-  CMD_SE_SENAO,
-  CMD_ENQUANTO,
-  CMD_BLOCO
-} comando_enum;
+/* 
+ * Cria um nó genérico, com rótulo `label`, linha `line` e exatamente `nChildren` filhos.
+ * Os filhos são passados via varargs, na ordem em que devem ficar em children[0..nChildren-1].
+ *
+ * Exemplo de uso:
+ *    ASTNode *filho1 = ...;
+ *    ASTNode *filho2 = ...;
+ *    ASTNode *pai   = astCreate("If", linha_if, 2, filho1, filho2);
+ *
+ * Atenção: em nós onde se queira guardar um valor literal (ID, INTCONST, CARCONST, CONSTSTRING),
+ * recomenda‐se usar astNewId, astNewInt, astNewChar ou astNewString, em vez de astCreate diretamente.
+ */
+ASTNode *astCreate(const char *label, int line, int nChildren, ...);
 
-typedef enum {
-  EXPR_OR,
-  EXPR_ATRIB, // id=Expr
-  EXPR_AND,
-  EXPR_EQ,
-  EXPR_NEQ,
-  EXPR_MENOR,
-  EXPR_MAIOR,
-  EXPR_GEQ,
-  EXPR_LEQ,
-  EXPR_ADD,
-  EXPR_SUB,
-  EXPR_MULT,
-  EXPR_DIV,
-  EXPR_MINUS_NEG,
-  EXPR_NOT,
-  EXPR_ID,
-  EXPR_CHAR,
-  EXPR_INTEGER,
-  EXPR
-} expr_enum;
+/*
+ * Cria um nó‐folha que representa um identificador (ID). A string `name` já deve vir alocada (strdup).
+ * Exemplo de uso em Bison:
+ *    { $$ = astNewId($1, @1.first_line); }
+ */
+ASTNode *astNewId(char *name, int line);
 
+/*
+ * Cria um nó‐folha que representa um inteiro literal (INTCONST).
+ * Exemplo de uso em Bison:
+ *    { $$ = astNewInt($1, @1.first_line); }
+ */
+ASTNode *astNewInt(int value, int line);
 
-//TODO: Struct ID {nome, tipo} :
+/*
+ * Cria um nó‐folha que representa um caractere literal (CARCONST).
+ * Exemplo de uso em Bison:
+ *    { $$ = astNewChar($1, @1.first_line); }
+ */
+ASTNode *astNewChar(char value, int line);
 
-typedef struct Programa {
-    DeclFuncVar *declFuncVar;
-    DeclProg *declProg;
-} Programa;
+/*
+ * Cria um nó‐folha que representa uma string literal (CONSTSTRING).
+ * A string `value` já deve vir alocada (strdup), incluindo as aspas caso deseje mantê‐las.
+ * Exemplo:
+ *    { $$ = astNewString($1, @1.first_line); }
+ */
+ASTNode *astNewString(char *value, int line);
 
-typedef struct DeclFuncVar {
-    type_t tipo;
-    char *id;
-    DeclVar *declVar;
-    DeclFuncVar *declFuncVar;
-    DeclFunc *declFunc;
- } DeclFuncVar;
+/*
+ * Destrói recursivamente toda a árvore enraizada em `node`, liberando memória.
+ */
+void astDestroy(ASTNode *node);
 
-typedef struct DeclProg {  // meio inutil, mas vou manter pela redibilidade
-    Bloco *bloco;
-} DeclProg;
+/*
+ * Imprime (para stdout) a subárvore enraizada em `node`, recuando `level` espaços
+ * a cada nível, para fins de debug ou visualização.
+ */
+void astPrint(ASTNode *node, int level);
 
-typedef struct DeclVar {
-  char *id;
-  DeclVar *declVar;
-} DeclVar;
-
-typedef struct DeclFunc {
-  ListaParametros *listaParametros;
-  Bloco *bloco;
-} DeclFunc;
-
-typedef struct ListaParametros {
-    type_t tipo;
-    char *id; 
-    ListaParametros *listaParametros; // pode ser vazio obviamente
-} ListaParametros;
-
-typedef struct Bloco {
-    ListaDeclVar *listaDeclVar;
-    Comando *comando; //ListaComando
-} Bloco;
-
-typedef struct ListaDeclVar {
-    type_t tipo;
-    char *id;
-    DeclVar *declVar;
-    ListaDeclVar *listaDeclVar;
-} ListaDeclVar;
-
-typedef enum {
-    TYPE_INTEGER,
-    TYPE_CHAR,
-    // TYPE_FUNCTION, // TODO: n precisa se pa?
-} type_t;
-
-// TODO START
-typedef struct Comando { // UNION
-    comando_enum tipo;
-    union {
-        Expr *expr; // para retorne, escreva, ...
-        
-        char *id; // para leia
-
-        char *cadeiaCaracteres; // para escreva
-
-        struct {
-            Expr *expr_cond;
-            Comando *comando_entao;
-            Comando *comando_senao;
-        } if_stmt;
-
-        struct {
-            Expr *expr_cond;
-            Comando *comando_enquanto;
-        } while_stmt;
-
-        Bloco *bloco;
-    };
-} Comando;
-
-typedef struct Expr { // UNION
-    expr_enum tipo;
-
-    Expr *esq;
-    Expr *dir;
-
-    union {
-        struct {
-            char *id;
-            expr_enum *expr;
-        } atribui;
-
-        char carconst;
-        int intconst;
-        const char *id;
-    };
-
-    Expr *expr_list;
-
-} Expr;
-
-#endif
+#endif /* AST_H */
