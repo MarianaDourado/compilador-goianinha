@@ -1,0 +1,1618 @@
+State 118 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: Programa $end
+
+    1 Programa: DeclFuncVar DeclProg
+
+    2 DeclFuncVar: Tipo ID DeclVar PONTOVIRGULA DeclFuncVar
+    3            | Tipo ID DeclFunc DeclFuncVar
+    4            | ε
+
+    5 DeclProg: PROGRAMA Bloco
+
+    6 DeclVar: VIRGULA ID DeclVar
+    7        | ε
+
+    8 DeclFunc: ABREPARENT ListaParametros FECHAPARENT Bloco
+
+    9 ListaParametros: ε
+   10                | ListaParametrosCont
+
+   11 ListaParametrosCont: Tipo ID
+   12                    | Tipo ID VIRGULA ListaParametrosCont
+
+   13 Bloco: ABRECHAVE ListaDeclVar ListaComando FECHACHAVE
+
+   14 ListaDeclVar: ε
+   15             | Tipo ID DeclVar PONTOVIRGULA ListaDeclVar
+
+   16 Tipo: INT
+   17     | CAR
+
+   18 ListaComando: Comando
+   19             | Comando ListaComando
+
+   20 Comando: PONTOVIRGULA
+   21        | Expr PONTOVIRGULA
+   22        | RETORNE Expr PONTOVIRGULA
+   23        | LEIA ID PONTOVIRGULA
+   24        | ESCREVA Expr PONTOVIRGULA
+   25        | ESCREVA CONSTSTRING PONTOVIRGULA
+   26        | NOVALINHA PONTOVIRGULA
+   27        | SE ABREPARENT Expr FECHAPARENT ENTAO Comando
+   28        | SE ABREPARENT Expr FECHAPARENT ENTAO Comando SENAO Comando
+   29        | ENQUANTO ABREPARENT Expr FECHAPARENT EXECUTE Comando
+   30        | Bloco
+
+   31 Expr: OrExpr
+   32     | ID RECEBE Expr
+
+   33 OrExpr: OrExpr OU AndExpr
+   34       | AndExpr
+
+   35 AndExpr: AndExpr E EqExpr
+   36        | EqExpr
+
+   37 EqExpr: EqExpr EQ DesigExpr
+   38       | EqExpr NEQ DesigExpr
+   39       | DesigExpr
+
+   40 DesigExpr: DesigExpr MENOR AddExpr
+   41          | DesigExpr MAIOR AddExpr
+   42          | DesigExpr GEQ AddExpr
+   43          | DesigExpr LEQ AddExpr
+   44          | AddExpr
+
+   45 AddExpr: AddExpr MAIS MulExpr
+   46        | AddExpr MENOS MulExpr
+   47        | MulExpr
+
+   48 MulExpr: MulExpr VEZES UnExpr
+   49        | MulExpr DIVIDE UnExpr
+   50        | UnExpr
+
+   51 UnExpr: MENOS PrimExpr
+   52       | NEG PrimExpr
+   53       | PrimExpr
+
+   54 PrimExpr: ID ABREPARENT ListExpr FECHAPARENT
+   55         | ID ABREPARENT FECHAPARENT
+   56         | ID
+   57         | CARCONST
+   58         | INTCONST
+   59         | ABREPARENT Expr FECHAPARENT
+
+   60 ListExpr: Expr
+   61         | ListExpr VIRGULA Expr
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    error (256)
+    PROGRAMA (258) 5
+    INT (259) 16
+    CAR (260) 17
+    LEIA (261) 23
+    ESCREVA (262) 24 25
+    NOVALINHA (263) 26
+    RETORNE (264) 22
+    INTCONST <intval> (265) 58
+    CARCONST <charval> (266) 57
+    ID <string> (267) 2 3 6 11 12 15 23 32 54 55 56
+    CONSTSTRING <string> (268) 25
+    SE (269) 27 28
+    ENTAO (270) 27 28
+    SENAO (271) 28
+    ENQUANTO (272) 29
+    EXECUTE (273) 29
+    OU (274) 33
+    E (275) 35
+    NEG (276) 52
+    EQ (277) 37
+    NEQ (278) 38
+    LEQ (279) 43
+    GEQ (280) 42
+    MENOR (281) 40
+    MAIOR (282) 41
+    RECEBE (283) 32
+    MAIS (284) 45
+    MENOS (285) 46 51
+    VEZES (286) 48
+    DIVIDE (287) 49
+    PONTOVIRGULA (288) 2 15 20 21 22 23 24 25 26
+    VIRGULA (289) 6 12 61
+    ABREPARENT (290) 8 27 28 29 54 55 59
+    FECHAPARENT (291) 8 27 28 29 54 55 59
+    ABRECHAVE (292) 13
+    FECHACHAVE (293) 13
+
+
+Nonterminals, with rules where they appear
+
+    $accept (39)
+        on left: 0
+    Programa <node> (40)
+        on left: 1
+        on right: 0
+    DeclFuncVar <node> (41)
+        on left: 2 3 4
+        on right: 1 2 3
+    DeclProg <node> (42)
+        on left: 5
+        on right: 1
+    DeclVar <node> (43)
+        on left: 6 7
+        on right: 2 6 15
+    DeclFunc <node> (44)
+        on left: 8
+        on right: 3
+    ListaParametros <node> (45)
+        on left: 9 10
+        on right: 8
+    ListaParametrosCont <node> (46)
+        on left: 11 12
+        on right: 10 12
+    Bloco <node> (47)
+        on left: 13
+        on right: 5 8 30
+    ListaDeclVar <node> (48)
+        on left: 14 15
+        on right: 13 15
+    Tipo <node> (49)
+        on left: 16 17
+        on right: 2 3 11 12 15
+    ListaComando <node> (50)
+        on left: 18 19
+        on right: 13 19
+    Comando <node> (51)
+        on left: 20 21 22 23 24 25 26 27 28 29 30
+        on right: 18 19 27 28 29
+    Expr <node> (52)
+        on left: 31 32
+        on right: 21 22 24 27 28 29 32 59 60 61
+    OrExpr <node> (53)
+        on left: 33 34
+        on right: 31 33
+    AndExpr <node> (54)
+        on left: 35 36
+        on right: 33 34 35
+    EqExpr <node> (55)
+        on left: 37 38 39
+        on right: 35 36 37 38
+    DesigExpr <node> (56)
+        on left: 40 41 42 43 44
+        on right: 37 38 39 40 41 42 43
+    AddExpr <node> (57)
+        on left: 45 46 47
+        on right: 40 41 42 43 44 45 46
+    MulExpr <node> (58)
+        on left: 48 49 50
+        on right: 45 46 47 48 49
+    UnExpr <node> (59)
+        on left: 51 52 53
+        on right: 48 49 50
+    PrimExpr <node> (60)
+        on left: 54 55 56 57 58 59
+        on right: 51 52 53
+    ListExpr <node> (61)
+        on left: 60 61
+        on right: 54 61
+
+
+State 0
+
+    0 $accept: • Programa $end
+
+    INT  shift, and go to state 1
+    CAR  shift, and go to state 2
+
+    $default  reduce using rule 4 (DeclFuncVar)
+
+    Programa     go to state 3
+    DeclFuncVar  go to state 4
+    Tipo         go to state 5
+
+
+State 1
+
+   16 Tipo: INT •
+
+    $default  reduce using rule 16 (Tipo)
+
+
+State 2
+
+   17 Tipo: CAR •
+
+    $default  reduce using rule 17 (Tipo)
+
+
+State 3
+
+    0 $accept: Programa • $end
+
+    $end  shift, and go to state 6
+
+
+State 4
+
+    1 Programa: DeclFuncVar • DeclProg
+
+    PROGRAMA  shift, and go to state 7
+
+    DeclProg  go to state 8
+
+
+State 5
+
+    2 DeclFuncVar: Tipo • ID DeclVar PONTOVIRGULA DeclFuncVar
+    3            | Tipo • ID DeclFunc DeclFuncVar
+
+    ID  shift, and go to state 9
+
+
+State 6
+
+    0 $accept: Programa $end •
+
+    $default  accept
+
+
+State 7
+
+    5 DeclProg: PROGRAMA • Bloco
+
+    ABRECHAVE  shift, and go to state 10
+
+    Bloco  go to state 11
+
+
+State 8
+
+    1 Programa: DeclFuncVar DeclProg •
+
+    $default  reduce using rule 1 (Programa)
+
+
+State 9
+
+    2 DeclFuncVar: Tipo ID • DeclVar PONTOVIRGULA DeclFuncVar
+    3            | Tipo ID • DeclFunc DeclFuncVar
+
+    VIRGULA     shift, and go to state 12
+    ABREPARENT  shift, and go to state 13
+
+    $default  reduce using rule 7 (DeclVar)
+
+    DeclVar   go to state 14
+    DeclFunc  go to state 15
+
+
+State 10
+
+   13 Bloco: ABRECHAVE • ListaDeclVar ListaComando FECHACHAVE
+
+    INT  shift, and go to state 1
+    CAR  shift, and go to state 2
+
+    $default  reduce using rule 14 (ListaDeclVar)
+
+    ListaDeclVar  go to state 16
+    Tipo          go to state 17
+
+
+State 11
+
+    5 DeclProg: PROGRAMA Bloco •
+
+    $default  reduce using rule 5 (DeclProg)
+
+
+State 12
+
+    6 DeclVar: VIRGULA • ID DeclVar
+
+    ID  shift, and go to state 18
+
+
+State 13
+
+    8 DeclFunc: ABREPARENT • ListaParametros FECHAPARENT Bloco
+
+    INT  shift, and go to state 1
+    CAR  shift, and go to state 2
+
+    $default  reduce using rule 9 (ListaParametros)
+
+    ListaParametros      go to state 19
+    ListaParametrosCont  go to state 20
+    Tipo                 go to state 21
+
+
+State 14
+
+    2 DeclFuncVar: Tipo ID DeclVar • PONTOVIRGULA DeclFuncVar
+
+    PONTOVIRGULA  shift, and go to state 22
+
+
+State 15
+
+    3 DeclFuncVar: Tipo ID DeclFunc • DeclFuncVar
+
+    INT  shift, and go to state 1
+    CAR  shift, and go to state 2
+
+    $default  reduce using rule 4 (DeclFuncVar)
+
+    DeclFuncVar  go to state 23
+    Tipo         go to state 5
+
+
+State 16
+
+   13 Bloco: ABRECHAVE ListaDeclVar • ListaComando FECHACHAVE
+
+    LEIA          shift, and go to state 24
+    ESCREVA       shift, and go to state 25
+    NOVALINHA     shift, and go to state 26
+    RETORNE       shift, and go to state 27
+    INTCONST      shift, and go to state 28
+    CARCONST      shift, and go to state 29
+    ID            shift, and go to state 30
+    SE            shift, and go to state 31
+    ENQUANTO      shift, and go to state 32
+    NEG           shift, and go to state 33
+    MENOS         shift, and go to state 34
+    PONTOVIRGULA  shift, and go to state 35
+    ABREPARENT    shift, and go to state 36
+    ABRECHAVE     shift, and go to state 10
+
+    Bloco         go to state 37
+    ListaComando  go to state 38
+    Comando       go to state 39
+    Expr          go to state 40
+    OrExpr        go to state 41
+    AndExpr       go to state 42
+    EqExpr        go to state 43
+    DesigExpr     go to state 44
+    AddExpr       go to state 45
+    MulExpr       go to state 46
+    UnExpr        go to state 47
+    PrimExpr      go to state 48
+
+
+State 17
+
+   15 ListaDeclVar: Tipo • ID DeclVar PONTOVIRGULA ListaDeclVar
+
+    ID  shift, and go to state 49
+
+
+State 18
+
+    6 DeclVar: VIRGULA ID • DeclVar
+
+    VIRGULA  shift, and go to state 12
+
+    $default  reduce using rule 7 (DeclVar)
+
+    DeclVar  go to state 50
+
+
+State 19
+
+    8 DeclFunc: ABREPARENT ListaParametros • FECHAPARENT Bloco
+
+    FECHAPARENT  shift, and go to state 51
+
+
+State 20
+
+   10 ListaParametros: ListaParametrosCont •
+
+    $default  reduce using rule 10 (ListaParametros)
+
+
+State 21
+
+   11 ListaParametrosCont: Tipo • ID
+   12                    | Tipo • ID VIRGULA ListaParametrosCont
+
+    ID  shift, and go to state 52
+
+
+State 22
+
+    2 DeclFuncVar: Tipo ID DeclVar PONTOVIRGULA • DeclFuncVar
+
+    INT  shift, and go to state 1
+    CAR  shift, and go to state 2
+
+    $default  reduce using rule 4 (DeclFuncVar)
+
+    DeclFuncVar  go to state 53
+    Tipo         go to state 5
+
+
+State 23
+
+    3 DeclFuncVar: Tipo ID DeclFunc DeclFuncVar •
+
+    $default  reduce using rule 3 (DeclFuncVar)
+
+
+State 24
+
+   23 Comando: LEIA • ID PONTOVIRGULA
+
+    ID  shift, and go to state 54
+
+
+State 25
+
+   24 Comando: ESCREVA • Expr PONTOVIRGULA
+   25        | ESCREVA • CONSTSTRING PONTOVIRGULA
+
+    INTCONST     shift, and go to state 28
+    CARCONST     shift, and go to state 29
+    ID           shift, and go to state 30
+    CONSTSTRING  shift, and go to state 55
+    NEG          shift, and go to state 33
+    MENOS        shift, and go to state 34
+    ABREPARENT   shift, and go to state 36
+
+    Expr       go to state 56
+    OrExpr     go to state 41
+    AndExpr    go to state 42
+    EqExpr     go to state 43
+    DesigExpr  go to state 44
+    AddExpr    go to state 45
+    MulExpr    go to state 46
+    UnExpr     go to state 47
+    PrimExpr   go to state 48
+
+
+State 26
+
+   26 Comando: NOVALINHA • PONTOVIRGULA
+
+    PONTOVIRGULA  shift, and go to state 57
+
+
+State 27
+
+   22 Comando: RETORNE • Expr PONTOVIRGULA
+
+    INTCONST    shift, and go to state 28
+    CARCONST    shift, and go to state 29
+    ID          shift, and go to state 30
+    NEG         shift, and go to state 33
+    MENOS       shift, and go to state 34
+    ABREPARENT  shift, and go to state 36
+
+    Expr       go to state 58
+    OrExpr     go to state 41
+    AndExpr    go to state 42
+    EqExpr     go to state 43
+    DesigExpr  go to state 44
+    AddExpr    go to state 45
+    MulExpr    go to state 46
+    UnExpr     go to state 47
+    PrimExpr   go to state 48
+
+
+State 28
+
+   58 PrimExpr: INTCONST •
+
+    $default  reduce using rule 58 (PrimExpr)
+
+
+State 29
+
+   57 PrimExpr: CARCONST •
+
+    $default  reduce using rule 57 (PrimExpr)
+
+
+State 30
+
+   32 Expr: ID • RECEBE Expr
+   54 PrimExpr: ID • ABREPARENT ListExpr FECHAPARENT
+   55         | ID • ABREPARENT FECHAPARENT
+   56         | ID •
+
+    RECEBE      shift, and go to state 59
+    ABREPARENT  shift, and go to state 60
+
+    $default  reduce using rule 56 (PrimExpr)
+
+
+State 31
+
+   27 Comando: SE • ABREPARENT Expr FECHAPARENT ENTAO Comando
+   28        | SE • ABREPARENT Expr FECHAPARENT ENTAO Comando SENAO Comando
+
+    ABREPARENT  shift, and go to state 61
+
+
+State 32
+
+   29 Comando: ENQUANTO • ABREPARENT Expr FECHAPARENT EXECUTE Comando
+
+    ABREPARENT  shift, and go to state 62
+
+
+State 33
+
+   52 UnExpr: NEG • PrimExpr
+
+    INTCONST    shift, and go to state 28
+    CARCONST    shift, and go to state 29
+    ID          shift, and go to state 63
+    ABREPARENT  shift, and go to state 36
+
+    PrimExpr  go to state 64
+
+
+State 34
+
+   51 UnExpr: MENOS • PrimExpr
+
+    INTCONST    shift, and go to state 28
+    CARCONST    shift, and go to state 29
+    ID          shift, and go to state 63
+    ABREPARENT  shift, and go to state 36
+
+    PrimExpr  go to state 65
+
+
+State 35
+
+   20 Comando: PONTOVIRGULA •
+
+    $default  reduce using rule 20 (Comando)
+
+
+State 36
+
+   59 PrimExpr: ABREPARENT • Expr FECHAPARENT
+
+    INTCONST    shift, and go to state 28
+    CARCONST    shift, and go to state 29
+    ID          shift, and go to state 30
+    NEG         shift, and go to state 33
+    MENOS       shift, and go to state 34
+    ABREPARENT  shift, and go to state 36
+
+    Expr       go to state 66
+    OrExpr     go to state 41
+    AndExpr    go to state 42
+    EqExpr     go to state 43
+    DesigExpr  go to state 44
+    AddExpr    go to state 45
+    MulExpr    go to state 46
+    UnExpr     go to state 47
+    PrimExpr   go to state 48
+
+
+State 37
+
+   30 Comando: Bloco •
+
+    $default  reduce using rule 30 (Comando)
+
+
+State 38
+
+   13 Bloco: ABRECHAVE ListaDeclVar ListaComando • FECHACHAVE
+
+    FECHACHAVE  shift, and go to state 67
+
+
+State 39
+
+   18 ListaComando: Comando •
+   19             | Comando • ListaComando
+
+    LEIA          shift, and go to state 24
+    ESCREVA       shift, and go to state 25
+    NOVALINHA     shift, and go to state 26
+    RETORNE       shift, and go to state 27
+    INTCONST      shift, and go to state 28
+    CARCONST      shift, and go to state 29
+    ID            shift, and go to state 30
+    SE            shift, and go to state 31
+    ENQUANTO      shift, and go to state 32
+    NEG           shift, and go to state 33
+    MENOS         shift, and go to state 34
+    PONTOVIRGULA  shift, and go to state 35
+    ABREPARENT    shift, and go to state 36
+    ABRECHAVE     shift, and go to state 10
+
+    $default  reduce using rule 18 (ListaComando)
+
+    Bloco         go to state 37
+    ListaComando  go to state 68
+    Comando       go to state 39
+    Expr          go to state 40
+    OrExpr        go to state 41
+    AndExpr       go to state 42
+    EqExpr        go to state 43
+    DesigExpr     go to state 44
+    AddExpr       go to state 45
+    MulExpr       go to state 46
+    UnExpr        go to state 47
+    PrimExpr      go to state 48
+
+
+State 40
+
+   21 Comando: Expr • PONTOVIRGULA
+
+    PONTOVIRGULA  shift, and go to state 69
+
+
+State 41
+
+   31 Expr: OrExpr •
+   33 OrExpr: OrExpr • OU AndExpr
+
+    OU  shift, and go to state 70
+
+    $default  reduce using rule 31 (Expr)
+
+
+State 42
+
+   34 OrExpr: AndExpr •
+   35 AndExpr: AndExpr • E EqExpr
+
+    E  shift, and go to state 71
+
+    $default  reduce using rule 34 (OrExpr)
+
+
+State 43
+
+   36 AndExpr: EqExpr •
+   37 EqExpr: EqExpr • EQ DesigExpr
+   38       | EqExpr • NEQ DesigExpr
+
+    EQ   shift, and go to state 72
+    NEQ  shift, and go to state 73
+
+    $default  reduce using rule 36 (AndExpr)
+
+
+State 44
+
+   39 EqExpr: DesigExpr •
+   40 DesigExpr: DesigExpr • MENOR AddExpr
+   41          | DesigExpr • MAIOR AddExpr
+   42          | DesigExpr • GEQ AddExpr
+   43          | DesigExpr • LEQ AddExpr
+
+    LEQ    shift, and go to state 74
+    GEQ    shift, and go to state 75
+    MENOR  shift, and go to state 76
+    MAIOR  shift, and go to state 77
+
+    $default  reduce using rule 39 (EqExpr)
+
+
+State 45
+
+   44 DesigExpr: AddExpr •
+   45 AddExpr: AddExpr • MAIS MulExpr
+   46        | AddExpr • MENOS MulExpr
+
+    MAIS   shift, and go to state 78
+    MENOS  shift, and go to state 79
+
+    $default  reduce using rule 44 (DesigExpr)
+
+
+State 46
+
+   47 AddExpr: MulExpr •
+   48 MulExpr: MulExpr • VEZES UnExpr
+   49        | MulExpr • DIVIDE UnExpr
+
+    VEZES   shift, and go to state 80
+    DIVIDE  shift, and go to state 81
+
+    $default  reduce using rule 47 (AddExpr)
+
+
+State 47
+
+   50 MulExpr: UnExpr •
+
+    $default  reduce using rule 50 (MulExpr)
+
+
+State 48
+
+   53 UnExpr: PrimExpr •
+
+    $default  reduce using rule 53 (UnExpr)
+
+
+State 49
+
+   15 ListaDeclVar: Tipo ID • DeclVar PONTOVIRGULA ListaDeclVar
+
+    VIRGULA  shift, and go to state 12
+
+    $default  reduce using rule 7 (DeclVar)
+
+    DeclVar  go to state 82
+
+
+State 50
+
+    6 DeclVar: VIRGULA ID DeclVar •
+
+    $default  reduce using rule 6 (DeclVar)
+
+
+State 51
+
+    8 DeclFunc: ABREPARENT ListaParametros FECHAPARENT • Bloco
+
+    ABRECHAVE  shift, and go to state 10
+
+    Bloco  go to state 83
+
+
+State 52
+
+   11 ListaParametrosCont: Tipo ID •
+   12                    | Tipo ID • VIRGULA ListaParametrosCont
+
+    VIRGULA  shift, and go to state 84
+
+    $default  reduce using rule 11 (ListaParametrosCont)
+
+
+State 53
+
+    2 DeclFuncVar: Tipo ID DeclVar PONTOVIRGULA DeclFuncVar •
+
+    $default  reduce using rule 2 (DeclFuncVar)
+
+
+State 54
+
+   23 Comando: LEIA ID • PONTOVIRGULA
+
+    PONTOVIRGULA  shift, and go to state 85
+
+
+State 55
+
+   25 Comando: ESCREVA CONSTSTRING • PONTOVIRGULA
+
+    PONTOVIRGULA  shift, and go to state 86
+
+
+State 56
+
+   24 Comando: ESCREVA Expr • PONTOVIRGULA
+
+    PONTOVIRGULA  shift, and go to state 87
+
+
+State 57
+
+   26 Comando: NOVALINHA PONTOVIRGULA •
+
+    $default  reduce using rule 26 (Comando)
+
+
+State 58
+
+   22 Comando: RETORNE Expr • PONTOVIRGULA
+
+    PONTOVIRGULA  shift, and go to state 88
+
+
+State 59
+
+   32 Expr: ID RECEBE • Expr
+
+    INTCONST    shift, and go to state 28
+    CARCONST    shift, and go to state 29
+    ID          shift, and go to state 30
+    NEG         shift, and go to state 33
+    MENOS       shift, and go to state 34
+    ABREPARENT  shift, and go to state 36
+
+    Expr       go to state 89
+    OrExpr     go to state 41
+    AndExpr    go to state 42
+    EqExpr     go to state 43
+    DesigExpr  go to state 44
+    AddExpr    go to state 45
+    MulExpr    go to state 46
+    UnExpr     go to state 47
+    PrimExpr   go to state 48
+
+
+State 60
+
+   54 PrimExpr: ID ABREPARENT • ListExpr FECHAPARENT
+   55         | ID ABREPARENT • FECHAPARENT
+
+    INTCONST     shift, and go to state 28
+    CARCONST     shift, and go to state 29
+    ID           shift, and go to state 30
+    NEG          shift, and go to state 33
+    MENOS        shift, and go to state 34
+    ABREPARENT   shift, and go to state 36
+    FECHAPARENT  shift, and go to state 90
+
+    Expr       go to state 91
+    OrExpr     go to state 41
+    AndExpr    go to state 42
+    EqExpr     go to state 43
+    DesigExpr  go to state 44
+    AddExpr    go to state 45
+    MulExpr    go to state 46
+    UnExpr     go to state 47
+    PrimExpr   go to state 48
+    ListExpr   go to state 92
+
+
+State 61
+
+   27 Comando: SE ABREPARENT • Expr FECHAPARENT ENTAO Comando
+   28        | SE ABREPARENT • Expr FECHAPARENT ENTAO Comando SENAO Comando
+
+    INTCONST    shift, and go to state 28
+    CARCONST    shift, and go to state 29
+    ID          shift, and go to state 30
+    NEG         shift, and go to state 33
+    MENOS       shift, and go to state 34
+    ABREPARENT  shift, and go to state 36
+
+    Expr       go to state 93
+    OrExpr     go to state 41
+    AndExpr    go to state 42
+    EqExpr     go to state 43
+    DesigExpr  go to state 44
+    AddExpr    go to state 45
+    MulExpr    go to state 46
+    UnExpr     go to state 47
+    PrimExpr   go to state 48
+
+
+State 62
+
+   29 Comando: ENQUANTO ABREPARENT • Expr FECHAPARENT EXECUTE Comando
+
+    INTCONST    shift, and go to state 28
+    CARCONST    shift, and go to state 29
+    ID          shift, and go to state 30
+    NEG         shift, and go to state 33
+    MENOS       shift, and go to state 34
+    ABREPARENT  shift, and go to state 36
+
+    Expr       go to state 94
+    OrExpr     go to state 41
+    AndExpr    go to state 42
+    EqExpr     go to state 43
+    DesigExpr  go to state 44
+    AddExpr    go to state 45
+    MulExpr    go to state 46
+    UnExpr     go to state 47
+    PrimExpr   go to state 48
+
+
+State 63
+
+   54 PrimExpr: ID • ABREPARENT ListExpr FECHAPARENT
+   55         | ID • ABREPARENT FECHAPARENT
+   56         | ID •
+
+    ABREPARENT  shift, and go to state 60
+
+    $default  reduce using rule 56 (PrimExpr)
+
+
+State 64
+
+   52 UnExpr: NEG PrimExpr •
+
+    $default  reduce using rule 52 (UnExpr)
+
+
+State 65
+
+   51 UnExpr: MENOS PrimExpr •
+
+    $default  reduce using rule 51 (UnExpr)
+
+
+State 66
+
+   59 PrimExpr: ABREPARENT Expr • FECHAPARENT
+
+    FECHAPARENT  shift, and go to state 95
+
+
+State 67
+
+   13 Bloco: ABRECHAVE ListaDeclVar ListaComando FECHACHAVE •
+
+    $default  reduce using rule 13 (Bloco)
+
+
+State 68
+
+   19 ListaComando: Comando ListaComando •
+
+    $default  reduce using rule 19 (ListaComando)
+
+
+State 69
+
+   21 Comando: Expr PONTOVIRGULA •
+
+    $default  reduce using rule 21 (Comando)
+
+
+State 70
+
+   33 OrExpr: OrExpr OU • AndExpr
+
+    INTCONST    shift, and go to state 28
+    CARCONST    shift, and go to state 29
+    ID          shift, and go to state 63
+    NEG         shift, and go to state 33
+    MENOS       shift, and go to state 34
+    ABREPARENT  shift, and go to state 36
+
+    AndExpr    go to state 96
+    EqExpr     go to state 43
+    DesigExpr  go to state 44
+    AddExpr    go to state 45
+    MulExpr    go to state 46
+    UnExpr     go to state 47
+    PrimExpr   go to state 48
+
+
+State 71
+
+   35 AndExpr: AndExpr E • EqExpr
+
+    INTCONST    shift, and go to state 28
+    CARCONST    shift, and go to state 29
+    ID          shift, and go to state 63
+    NEG         shift, and go to state 33
+    MENOS       shift, and go to state 34
+    ABREPARENT  shift, and go to state 36
+
+    EqExpr     go to state 97
+    DesigExpr  go to state 44
+    AddExpr    go to state 45
+    MulExpr    go to state 46
+    UnExpr     go to state 47
+    PrimExpr   go to state 48
+
+
+State 72
+
+   37 EqExpr: EqExpr EQ • DesigExpr
+
+    INTCONST    shift, and go to state 28
+    CARCONST    shift, and go to state 29
+    ID          shift, and go to state 63
+    NEG         shift, and go to state 33
+    MENOS       shift, and go to state 34
+    ABREPARENT  shift, and go to state 36
+
+    DesigExpr  go to state 98
+    AddExpr    go to state 45
+    MulExpr    go to state 46
+    UnExpr     go to state 47
+    PrimExpr   go to state 48
+
+
+State 73
+
+   38 EqExpr: EqExpr NEQ • DesigExpr
+
+    INTCONST    shift, and go to state 28
+    CARCONST    shift, and go to state 29
+    ID          shift, and go to state 63
+    NEG         shift, and go to state 33
+    MENOS       shift, and go to state 34
+    ABREPARENT  shift, and go to state 36
+
+    DesigExpr  go to state 99
+    AddExpr    go to state 45
+    MulExpr    go to state 46
+    UnExpr     go to state 47
+    PrimExpr   go to state 48
+
+
+State 74
+
+   43 DesigExpr: DesigExpr LEQ • AddExpr
+
+    INTCONST    shift, and go to state 28
+    CARCONST    shift, and go to state 29
+    ID          shift, and go to state 63
+    NEG         shift, and go to state 33
+    MENOS       shift, and go to state 34
+    ABREPARENT  shift, and go to state 36
+
+    AddExpr   go to state 100
+    MulExpr   go to state 46
+    UnExpr    go to state 47
+    PrimExpr  go to state 48
+
+
+State 75
+
+   42 DesigExpr: DesigExpr GEQ • AddExpr
+
+    INTCONST    shift, and go to state 28
+    CARCONST    shift, and go to state 29
+    ID          shift, and go to state 63
+    NEG         shift, and go to state 33
+    MENOS       shift, and go to state 34
+    ABREPARENT  shift, and go to state 36
+
+    AddExpr   go to state 101
+    MulExpr   go to state 46
+    UnExpr    go to state 47
+    PrimExpr  go to state 48
+
+
+State 76
+
+   40 DesigExpr: DesigExpr MENOR • AddExpr
+
+    INTCONST    shift, and go to state 28
+    CARCONST    shift, and go to state 29
+    ID          shift, and go to state 63
+    NEG         shift, and go to state 33
+    MENOS       shift, and go to state 34
+    ABREPARENT  shift, and go to state 36
+
+    AddExpr   go to state 102
+    MulExpr   go to state 46
+    UnExpr    go to state 47
+    PrimExpr  go to state 48
+
+
+State 77
+
+   41 DesigExpr: DesigExpr MAIOR • AddExpr
+
+    INTCONST    shift, and go to state 28
+    CARCONST    shift, and go to state 29
+    ID          shift, and go to state 63
+    NEG         shift, and go to state 33
+    MENOS       shift, and go to state 34
+    ABREPARENT  shift, and go to state 36
+
+    AddExpr   go to state 103
+    MulExpr   go to state 46
+    UnExpr    go to state 47
+    PrimExpr  go to state 48
+
+
+State 78
+
+   45 AddExpr: AddExpr MAIS • MulExpr
+
+    INTCONST    shift, and go to state 28
+    CARCONST    shift, and go to state 29
+    ID          shift, and go to state 63
+    NEG         shift, and go to state 33
+    MENOS       shift, and go to state 34
+    ABREPARENT  shift, and go to state 36
+
+    MulExpr   go to state 104
+    UnExpr    go to state 47
+    PrimExpr  go to state 48
+
+
+State 79
+
+   46 AddExpr: AddExpr MENOS • MulExpr
+
+    INTCONST    shift, and go to state 28
+    CARCONST    shift, and go to state 29
+    ID          shift, and go to state 63
+    NEG         shift, and go to state 33
+    MENOS       shift, and go to state 34
+    ABREPARENT  shift, and go to state 36
+
+    MulExpr   go to state 105
+    UnExpr    go to state 47
+    PrimExpr  go to state 48
+
+
+State 80
+
+   48 MulExpr: MulExpr VEZES • UnExpr
+
+    INTCONST    shift, and go to state 28
+    CARCONST    shift, and go to state 29
+    ID          shift, and go to state 63
+    NEG         shift, and go to state 33
+    MENOS       shift, and go to state 34
+    ABREPARENT  shift, and go to state 36
+
+    UnExpr    go to state 106
+    PrimExpr  go to state 48
+
+
+State 81
+
+   49 MulExpr: MulExpr DIVIDE • UnExpr
+
+    INTCONST    shift, and go to state 28
+    CARCONST    shift, and go to state 29
+    ID          shift, and go to state 63
+    NEG         shift, and go to state 33
+    MENOS       shift, and go to state 34
+    ABREPARENT  shift, and go to state 36
+
+    UnExpr    go to state 107
+    PrimExpr  go to state 48
+
+
+State 82
+
+   15 ListaDeclVar: Tipo ID DeclVar • PONTOVIRGULA ListaDeclVar
+
+    PONTOVIRGULA  shift, and go to state 108
+
+
+State 83
+
+    8 DeclFunc: ABREPARENT ListaParametros FECHAPARENT Bloco •
+
+    $default  reduce using rule 8 (DeclFunc)
+
+
+State 84
+
+   12 ListaParametrosCont: Tipo ID VIRGULA • ListaParametrosCont
+
+    INT  shift, and go to state 1
+    CAR  shift, and go to state 2
+
+    ListaParametrosCont  go to state 109
+    Tipo                 go to state 21
+
+
+State 85
+
+   23 Comando: LEIA ID PONTOVIRGULA •
+
+    $default  reduce using rule 23 (Comando)
+
+
+State 86
+
+   25 Comando: ESCREVA CONSTSTRING PONTOVIRGULA •
+
+    $default  reduce using rule 25 (Comando)
+
+
+State 87
+
+   24 Comando: ESCREVA Expr PONTOVIRGULA •
+
+    $default  reduce using rule 24 (Comando)
+
+
+State 88
+
+   22 Comando: RETORNE Expr PONTOVIRGULA •
+
+    $default  reduce using rule 22 (Comando)
+
+
+State 89
+
+   32 Expr: ID RECEBE Expr •
+
+    $default  reduce using rule 32 (Expr)
+
+
+State 90
+
+   55 PrimExpr: ID ABREPARENT FECHAPARENT •
+
+    $default  reduce using rule 55 (PrimExpr)
+
+
+State 91
+
+   60 ListExpr: Expr •
+
+    $default  reduce using rule 60 (ListExpr)
+
+
+State 92
+
+   54 PrimExpr: ID ABREPARENT ListExpr • FECHAPARENT
+   61 ListExpr: ListExpr • VIRGULA Expr
+
+    VIRGULA      shift, and go to state 110
+    FECHAPARENT  shift, and go to state 111
+
+
+State 93
+
+   27 Comando: SE ABREPARENT Expr • FECHAPARENT ENTAO Comando
+   28        | SE ABREPARENT Expr • FECHAPARENT ENTAO Comando SENAO Comando
+
+    FECHAPARENT  shift, and go to state 112
+
+
+State 94
+
+   29 Comando: ENQUANTO ABREPARENT Expr • FECHAPARENT EXECUTE Comando
+
+    FECHAPARENT  shift, and go to state 113
+
+
+State 95
+
+   59 PrimExpr: ABREPARENT Expr FECHAPARENT •
+
+    $default  reduce using rule 59 (PrimExpr)
+
+
+State 96
+
+   33 OrExpr: OrExpr OU AndExpr •
+   35 AndExpr: AndExpr • E EqExpr
+
+    E  shift, and go to state 71
+
+    $default  reduce using rule 33 (OrExpr)
+
+
+State 97
+
+   35 AndExpr: AndExpr E EqExpr •
+   37 EqExpr: EqExpr • EQ DesigExpr
+   38       | EqExpr • NEQ DesigExpr
+
+    EQ   shift, and go to state 72
+    NEQ  shift, and go to state 73
+
+    $default  reduce using rule 35 (AndExpr)
+
+
+State 98
+
+   37 EqExpr: EqExpr EQ DesigExpr •
+   40 DesigExpr: DesigExpr • MENOR AddExpr
+   41          | DesigExpr • MAIOR AddExpr
+   42          | DesigExpr • GEQ AddExpr
+   43          | DesigExpr • LEQ AddExpr
+
+    LEQ    shift, and go to state 74
+    GEQ    shift, and go to state 75
+    MENOR  shift, and go to state 76
+    MAIOR  shift, and go to state 77
+
+    $default  reduce using rule 37 (EqExpr)
+
+
+State 99
+
+   38 EqExpr: EqExpr NEQ DesigExpr •
+   40 DesigExpr: DesigExpr • MENOR AddExpr
+   41          | DesigExpr • MAIOR AddExpr
+   42          | DesigExpr • GEQ AddExpr
+   43          | DesigExpr • LEQ AddExpr
+
+    LEQ    shift, and go to state 74
+    GEQ    shift, and go to state 75
+    MENOR  shift, and go to state 76
+    MAIOR  shift, and go to state 77
+
+    $default  reduce using rule 38 (EqExpr)
+
+
+State 100
+
+   43 DesigExpr: DesigExpr LEQ AddExpr •
+   45 AddExpr: AddExpr • MAIS MulExpr
+   46        | AddExpr • MENOS MulExpr
+
+    MAIS   shift, and go to state 78
+    MENOS  shift, and go to state 79
+
+    $default  reduce using rule 43 (DesigExpr)
+
+
+State 101
+
+   42 DesigExpr: DesigExpr GEQ AddExpr •
+   45 AddExpr: AddExpr • MAIS MulExpr
+   46        | AddExpr • MENOS MulExpr
+
+    MAIS   shift, and go to state 78
+    MENOS  shift, and go to state 79
+
+    $default  reduce using rule 42 (DesigExpr)
+
+
+State 102
+
+   40 DesigExpr: DesigExpr MENOR AddExpr •
+   45 AddExpr: AddExpr • MAIS MulExpr
+   46        | AddExpr • MENOS MulExpr
+
+    MAIS   shift, and go to state 78
+    MENOS  shift, and go to state 79
+
+    $default  reduce using rule 40 (DesigExpr)
+
+
+State 103
+
+   41 DesigExpr: DesigExpr MAIOR AddExpr •
+   45 AddExpr: AddExpr • MAIS MulExpr
+   46        | AddExpr • MENOS MulExpr
+
+    MAIS   shift, and go to state 78
+    MENOS  shift, and go to state 79
+
+    $default  reduce using rule 41 (DesigExpr)
+
+
+State 104
+
+   45 AddExpr: AddExpr MAIS MulExpr •
+   48 MulExpr: MulExpr • VEZES UnExpr
+   49        | MulExpr • DIVIDE UnExpr
+
+    VEZES   shift, and go to state 80
+    DIVIDE  shift, and go to state 81
+
+    $default  reduce using rule 45 (AddExpr)
+
+
+State 105
+
+   46 AddExpr: AddExpr MENOS MulExpr •
+   48 MulExpr: MulExpr • VEZES UnExpr
+   49        | MulExpr • DIVIDE UnExpr
+
+    VEZES   shift, and go to state 80
+    DIVIDE  shift, and go to state 81
+
+    $default  reduce using rule 46 (AddExpr)
+
+
+State 106
+
+   48 MulExpr: MulExpr VEZES UnExpr •
+
+    $default  reduce using rule 48 (MulExpr)
+
+
+State 107
+
+   49 MulExpr: MulExpr DIVIDE UnExpr •
+
+    $default  reduce using rule 49 (MulExpr)
+
+
+State 108
+
+   15 ListaDeclVar: Tipo ID DeclVar PONTOVIRGULA • ListaDeclVar
+
+    INT  shift, and go to state 1
+    CAR  shift, and go to state 2
+
+    $default  reduce using rule 14 (ListaDeclVar)
+
+    ListaDeclVar  go to state 114
+    Tipo          go to state 17
+
+
+State 109
+
+   12 ListaParametrosCont: Tipo ID VIRGULA ListaParametrosCont •
+
+    $default  reduce using rule 12 (ListaParametrosCont)
+
+
+State 110
+
+   61 ListExpr: ListExpr VIRGULA • Expr
+
+    INTCONST    shift, and go to state 28
+    CARCONST    shift, and go to state 29
+    ID          shift, and go to state 30
+    NEG         shift, and go to state 33
+    MENOS       shift, and go to state 34
+    ABREPARENT  shift, and go to state 36
+
+    Expr       go to state 115
+    OrExpr     go to state 41
+    AndExpr    go to state 42
+    EqExpr     go to state 43
+    DesigExpr  go to state 44
+    AddExpr    go to state 45
+    MulExpr    go to state 46
+    UnExpr     go to state 47
+    PrimExpr   go to state 48
+
+
+State 111
+
+   54 PrimExpr: ID ABREPARENT ListExpr FECHAPARENT •
+
+    $default  reduce using rule 54 (PrimExpr)
+
+
+State 112
+
+   27 Comando: SE ABREPARENT Expr FECHAPARENT • ENTAO Comando
+   28        | SE ABREPARENT Expr FECHAPARENT • ENTAO Comando SENAO Comando
+
+    ENTAO  shift, and go to state 116
+
+
+State 113
+
+   29 Comando: ENQUANTO ABREPARENT Expr FECHAPARENT • EXECUTE Comando
+
+    EXECUTE  shift, and go to state 117
+
+
+State 114
+
+   15 ListaDeclVar: Tipo ID DeclVar PONTOVIRGULA ListaDeclVar •
+
+    $default  reduce using rule 15 (ListaDeclVar)
+
+
+State 115
+
+   61 ListExpr: ListExpr VIRGULA Expr •
+
+    $default  reduce using rule 61 (ListExpr)
+
+
+State 116
+
+   27 Comando: SE ABREPARENT Expr FECHAPARENT ENTAO • Comando
+   28        | SE ABREPARENT Expr FECHAPARENT ENTAO • Comando SENAO Comando
+
+    LEIA          shift, and go to state 24
+    ESCREVA       shift, and go to state 25
+    NOVALINHA     shift, and go to state 26
+    RETORNE       shift, and go to state 27
+    INTCONST      shift, and go to state 28
+    CARCONST      shift, and go to state 29
+    ID            shift, and go to state 30
+    SE            shift, and go to state 31
+    ENQUANTO      shift, and go to state 32
+    NEG           shift, and go to state 33
+    MENOS         shift, and go to state 34
+    PONTOVIRGULA  shift, and go to state 35
+    ABREPARENT    shift, and go to state 36
+    ABRECHAVE     shift, and go to state 10
+
+    Bloco      go to state 37
+    Comando    go to state 118
+    Expr       go to state 40
+    OrExpr     go to state 41
+    AndExpr    go to state 42
+    EqExpr     go to state 43
+    DesigExpr  go to state 44
+    AddExpr    go to state 45
+    MulExpr    go to state 46
+    UnExpr     go to state 47
+    PrimExpr   go to state 48
+
+
+State 117
+
+   29 Comando: ENQUANTO ABREPARENT Expr FECHAPARENT EXECUTE • Comando
+
+    LEIA          shift, and go to state 24
+    ESCREVA       shift, and go to state 25
+    NOVALINHA     shift, and go to state 26
+    RETORNE       shift, and go to state 27
+    INTCONST      shift, and go to state 28
+    CARCONST      shift, and go to state 29
+    ID            shift, and go to state 30
+    SE            shift, and go to state 31
+    ENQUANTO      shift, and go to state 32
+    NEG           shift, and go to state 33
+    MENOS         shift, and go to state 34
+    PONTOVIRGULA  shift, and go to state 35
+    ABREPARENT    shift, and go to state 36
+    ABRECHAVE     shift, and go to state 10
+
+    Bloco      go to state 37
+    Comando    go to state 119
+    Expr       go to state 40
+    OrExpr     go to state 41
+    AndExpr    go to state 42
+    EqExpr     go to state 43
+    DesigExpr  go to state 44
+    AddExpr    go to state 45
+    MulExpr    go to state 46
+    UnExpr     go to state 47
+    PrimExpr   go to state 48
+
+
+State 118
+
+   27 Comando: SE ABREPARENT Expr FECHAPARENT ENTAO Comando •
+   28        | SE ABREPARENT Expr FECHAPARENT ENTAO Comando • SENAO Comando
+
+    SENAO  shift, and go to state 120
+
+    SENAO     [reduce using rule 27 (Comando)]
+    $default  reduce using rule 27 (Comando)
+
+
+State 119
+
+   29 Comando: ENQUANTO ABREPARENT Expr FECHAPARENT EXECUTE Comando •
+
+    $default  reduce using rule 29 (Comando)
+
+
+State 120
+
+   28 Comando: SE ABREPARENT Expr FECHAPARENT ENTAO Comando SENAO • Comando
+
+    LEIA          shift, and go to state 24
+    ESCREVA       shift, and go to state 25
+    NOVALINHA     shift, and go to state 26
+    RETORNE       shift, and go to state 27
+    INTCONST      shift, and go to state 28
+    CARCONST      shift, and go to state 29
+    ID            shift, and go to state 30
+    SE            shift, and go to state 31
+    ENQUANTO      shift, and go to state 32
+    NEG           shift, and go to state 33
+    MENOS         shift, and go to state 34
+    PONTOVIRGULA  shift, and go to state 35
+    ABREPARENT    shift, and go to state 36
+    ABRECHAVE     shift, and go to state 10
+
+    Bloco      go to state 37
+    Comando    go to state 121
+    Expr       go to state 40
+    OrExpr     go to state 41
+    AndExpr    go to state 42
+    EqExpr     go to state 43
+    DesigExpr  go to state 44
+    AddExpr    go to state 45
+    MulExpr    go to state 46
+    UnExpr     go to state 47
+    PrimExpr   go to state 48
+
+
+State 121
+
+   28 Comando: SE ABREPARENT Expr FECHAPARENT ENTAO Comando SENAO Comando •
+
+    $default  reduce using rule 28 (Comando)

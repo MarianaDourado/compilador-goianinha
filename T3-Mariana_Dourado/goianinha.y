@@ -5,14 +5,17 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include "goianinha.sintatico.h"
+
 #include "ast.h"
+#include "goianinha.tab.h"
 
 extern FILE *yyin;
 extern int yylineno;
 void yyerror(const char *);
 extern int yyparse();
 extern int yylex();
+
+ASTNode *raizAST;
 %}
 
 /* %define parse.trace */ // para debug
@@ -44,6 +47,7 @@ extern int yylex();
 %type <node> ListaParametros ListaParametrosCont Bloco ListaDeclVar
 %type <node> ListaComando Comando Expr OrExpr AndExpr EqExpr DesigExpr
 %type <node> AddExpr MulExpr UnExpr PrimExpr ListExpr
+%type <node> Tipo
 
 %%
 
@@ -71,7 +75,7 @@ DeclFuncVar
             ASTNode *nID       = astNewId($2, @2.first_line);
             ASTNode *nParams   = $3;
             ASTNode *nCont     = $4;  // corpo
-            ASTNode *next      = $5;
+            ASTNode *next      = NULL;
 
             $$ = astCreate("DeclFuncGlobal", @1.first_line, 4, nTipo, nID, nParams, nCont);
         }
@@ -144,8 +148,8 @@ ListaDeclVar
     ;
 
 Tipo
-    : INT
-    | CAR
+    : INT { $$ = astCreate("INT", yylineno, 0); }
+    | CAR { $$ = astCreate("CAR", yylineno, 0); }
     ;
 
 ListaComando
