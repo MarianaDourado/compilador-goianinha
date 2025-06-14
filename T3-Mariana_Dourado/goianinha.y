@@ -54,7 +54,7 @@ ASTNode *raizAST;
 Programa
     : DeclFuncVar DeclProg
         {
-            $$ = astCreate("Programa", @1.first_line, 2, $1, $2);
+            $$ = astCreate("Programa", yylineno, 2, $1, $2);
             raizAST = $$;
         }
     ;
@@ -62,88 +62,88 @@ Programa
 DeclFuncVar
     : Tipo ID DeclVar PONTOVIRGULA DeclFuncVar
         {
-            ASTNode *nTipo  = astCreate("Tipo", @1.first_line, 1, $1);
-            ASTNode *nID    = astNewId($2, @2.first_line);
+            ASTNode *nTipo  = astCreate("Tipo", yylineno, 1, $1);
+            ASTNode *nID    = astNewId($2, $3->line);
             ASTNode *nDeclV = $3;
             ASTNode *next   = $5;
 
-            $$ = astCreate("DeclVarGlobal", @1.first_line, 4, nTipo, nID, nDeclV, next);
+            $$ = astCreate("DeclVarGlobal", $1->line, 4, nTipo, nID, nDeclV, next);
         }
     | Tipo ID DeclFunc DeclFuncVar
         {
-            ASTNode *nTipo     = astCreate("Tipo", @1.first_line, 1, $1);
-            ASTNode *nID       = astNewId($2, @2.first_line);
+            ASTNode *nTipo     = astCreate("Tipo", yylineno, 1, $1);
+            ASTNode *nID       = astNewId($2, $1->line);
             ASTNode *nParams   = $3;
             ASTNode *nCont     = $4;  // corpo
             ASTNode *next      = NULL;
 
-            $$ = astCreate("DeclFuncGlobal", @1.first_line, 4, nTipo, nID, nParams, nCont);
+            $$ = astCreate("DeclFuncGlobal", $1->line, 4, nTipo, nID, nParams, nCont);
         }
-    | /* vazio */ { $$ = astCreate("DeclFuncVar", @$.first_line, 0); }
+    | /* vazio */ { $$ = astCreate("DeclFuncVar", yylineno, 0); }
     ;
 
 DeclProg
     : PROGRAMA Bloco
         {
-            ASTNode *nProgTok = astCreate("KW_PROGRAMA", @1.first_line, 0);
-            $$ = astCreate("DeclProg", @1.first_line, 2, nProgTok, $2);
+            ASTNode *nProgTok = astCreate("KW_PROGRAMA", yylineno, 0);
+            $$ = astCreate("DeclProg", yylineno, 2, nProgTok, $2);
         }
     ;
 
 DeclVar
     : VIRGULA ID DeclVar
         {
-            ASTNode *nID = astNewId($2, @2.first_line); ASTNode *nRest = $3;
-            $$ = astCreate("DeclVarMulti", @2.first_line, 2, nID, nRest);
+            ASTNode *nID = astNewId($2, yylineno); ASTNode *nRest = $3;
+            $$ = astCreate("DeclVarMulti", yylineno, 2, nID, nRest);
         }
-    | /* vazio */ { $$ = astCreate("DeclVarMulti", @$.first_line, 0); }
+    | /* vazio */ { $$ = astCreate("DeclVarMulti", yylineno, 0); }
     ;
 
 DeclFunc
     : ABREPARENT ListaParametros FECHAPARENT Bloco
         {
             ASTNode *nLP = $2; ASTNode *nB = $4;
-            $$ = astCreate("DeclFunc", @1.first_line, 2, nLP, nB);
+            $$ = astCreate("DeclFunc", yylineno, 2, nLP, nB);
         }
     ;
 
 ListaParametros
-    : /* vazio */ { $$ = astCreate("ListaParametros", @$.first_line, 0); }
+    : /* vazio */ { $$ = astCreate("ListaParametros", yylineno, 0); }
     | ListaParametrosCont { $$ = $1; }
     ;
 
 ListaParametrosCont
     : Tipo ID
         {
-            ASTNode *nTipo = astCreate("Tipo", @1.first_line, 1, $1);
-            ASTNode *nID   = astNewId($2, @2.first_line);
-            $$ = astCreate("Param", @1.first_line, 2, nTipo, nID);
+            ASTNode *nTipo = astCreate("Tipo", yylineno, 1, $1);
+            ASTNode *nID   = astNewId($2, yylineno);
+            $$ = astCreate("Param", yylineno, 2, nTipo, nID);
         }
     | Tipo ID VIRGULA ListaParametrosCont
         {
-            ASTNode *nTipo = astCreate("Tipo", @1.first_line, 1, $1);
-            ASTNode *nID   = astNewId($2, @2.first_line);
+            ASTNode *nTipo = astCreate("Tipo", yylineno, 1, $1);
+            ASTNode *nID   = astNewId($2, yylineno);
             ASTNode *nRest = $4;
-            $$ = astCreate("ParamLista", @1.first_line, 3, nTipo, nID, nRest);
+            $$ = astCreate("ParamLista", yylineno, 3, nTipo, nID, nRest);
         }
     ;
 
 Bloco
     : ABRECHAVE ListaDeclVar ListaComando FECHACHAVE
         {
-            $$ = astCreate("Bloco", @1.first_line, 2, $2, $3);
+            $$ = astCreate("Bloco", yylineno, 2, $2, $3);
         }
     ;
 
 ListaDeclVar
-    : /* vazio */ { $$ = astCreate("ListaDeclVar", @$.first_line, 0); }
+    : /* vazio */ { $$ = astCreate("ListaDeclVar", yylineno, 0); }
     | Tipo ID DeclVar PONTOVIRGULA ListaDeclVar
         {
-            ASTNode *nTipo   = astCreate("Tipo", @1.first_line, 1, $1);
-            ASTNode *nID     = astNewId($2, @2.first_line);
+            ASTNode *nTipo   = astCreate("Tipo", yylineno, 1, $1);
+            ASTNode *nID     = astNewId($2, $3->line);
             ASTNode *nDeclV  = $3;    /* resto DeclVar */
             ASTNode *nResto  = $5;    /* continuação ListaDeclVar */
-            $$ = astCreate("DeclVarLocal", @1.first_line, 4, nTipo, nID, nDeclV, nResto);
+            $$ = astCreate("DeclVarLocal", yylineno, 4, nTipo, nID, nDeclV, nResto);
         }
     ;
 
@@ -153,59 +153,59 @@ Tipo
     ;
 
 ListaComando
-    : Comando { $$ = astCreate("ListaComando", @1.first_line, 1, $1); }
+    : Comando { $$ = astCreate("ListaComando", yylineno, 1, $1); }
     | Comando ListaComando
         {
-            $$ = astCreate("ListaComando", @1.first_line, 2, $1, $2);
+            $$ = astCreate("ListaComando", yylineno, 2, $1, $2);
         }
     ;
 
 Comando
     : PONTOVIRGULA
         {
-            $$ = astCreate("NoOp", @1.first_line, 0);
+            $$ = astCreate("NoOp", yylineno, 0);
         }
     | Expr PONTOVIRGULA
         {
-            $$ = astCreate("ExprStmt", @1.first_line, 1, $1);
+            $$ = astCreate("ExprStmt", yylineno, 1, $1);
         }
     | RETORNE Expr PONTOVIRGULA
         {
-            $$ = astCreate("Return", @1.first_line, 1, $2);
+            $$ = astCreate("Return", yylineno, 1, $2);
         }
     | LEIA ID PONTOVIRGULA
         {
-            ASTNode *nID = astNewId($2, @2.first_line);
-            $$ = astCreate("Read", @1.first_line, 1, nID);
+            ASTNode *nID = astNewId($2, yylineno);
+            $$ = astCreate("Read", yylineno, 1, nID);
         }
     | ESCREVA Expr PONTOVIRGULA
         {
-            $$ = astCreate("WriteExpr", @1.first_line, 1, $2);
+            $$ = astCreate("WriteExpr", yylineno, 1, $2);
         }
     | ESCREVA CONSTSTRING PONTOVIRGULA
         {
-            ASTNode *nStr = astNewString($2, @2.first_line);
-            $$ = astCreate("WriteString", @1.first_line, 1, nStr);
+            ASTNode *nStr = astNewString($2, yylineno);
+            $$ = astCreate("WriteString", yylineno, 1, nStr);
         }
     | NOVALINHA PONTOVIRGULA
         {
-            $$ = astCreate("NewLine", @1.first_line, 0);
+            $$ = astCreate("NewLine", yylineno, 0);
         }
     | SE ABREPARENT Expr FECHAPARENT ENTAO Comando
         {
-            $$ = astCreate("If", @1.first_line, 2, $3, $6);
+            $$ = astCreate("If", yylineno, 2, $3, $6);
         }
     | SE ABREPARENT Expr FECHAPARENT ENTAO Comando SENAO Comando
         {
-            $$ = astCreate("IfElse", @1.first_line, 3, $3, $6, $8);
+            $$ = astCreate("IfElse", yylineno, 3, $3, $6, $8);
         }
     | ENQUANTO ABREPARENT Expr FECHAPARENT EXECUTE Comando
         {
-            $$ = astCreate("While", @1.first_line, 2, $3, $6);
+            $$ = astCreate("While", yylineno, 2, $3, $6);
         }
     | Bloco
         {
-            $$ = astCreate("BlockStmt", @1.first_line, 1, $1);
+            $$ = astCreate("BlockStmt", yylineno, 1, $1);
         }
     ;
 
@@ -217,9 +217,9 @@ Expr
       }
     | ID RECEBE Expr
       {
-        ASTNode *nID  = astNewId($1, @1.first_line);
+        ASTNode *nID  = astNewId($1, yylineno);
         ASTNode *rhs  = $3;
-        $$ = astCreate("Assign", @1.first_line, 2, nID, rhs);
+        $$ = astCreate("Assign", yylineno, 2, nID, rhs);
       }
     ;
 
@@ -227,7 +227,7 @@ Expr
 OrExpr
     : OrExpr OU AndExpr
       {
-        $$ = astCreate("Or", @2.first_line, 2, $1, $3);
+        $$ = astCreate("Or", yylineno, 2, $1, $3);
       }
     | AndExpr
       {
@@ -239,7 +239,7 @@ OrExpr
 AndExpr
     : AndExpr E EqExpr
       {
-        $$ = astCreate("And", @2.first_line, 2, $1, $3);
+        $$ = astCreate("And", yylineno, 2, $1, $3);
       }
     | EqExpr
       {
@@ -251,11 +251,11 @@ AndExpr
 EqExpr
     : EqExpr EQ DesigExpr
       {
-        $$ = astCreate("Eq", @2.first_line, 2, $1, $3);
+        $$ = astCreate("Eq", yylineno, 2, $1, $3);
       }
     | EqExpr NEQ DesigExpr
       {
-        $$ = astCreate("Neq", @2.first_line, 2, $1, $3);
+        $$ = astCreate("Neq", yylineno, 2, $1, $3);
       }
     | DesigExpr { $$ = $1; }
     ;
@@ -264,19 +264,19 @@ EqExpr
 DesigExpr
     : DesigExpr MENOR AddExpr
         {
-            $$ = astCreate("Less", @2.first_line, 2, $1, $3);
+            $$ = astCreate("Less", yylineno, 2, $1, $3);
         }
     | DesigExpr MAIOR AddExpr
         {
-            $$ = astCreate("Greater", @2.first_line, 2, $1, $3);
+            $$ = astCreate("Greater", yylineno, 2, $1, $3);
         }
     | DesigExpr GEQ AddExpr
         {
-            $$ = astCreate("Geq", @2.first_line, 2, $1, $3);
+            $$ = astCreate("Geq", yylineno, 2, $1, $3);
         }
     | DesigExpr LEQ AddExpr
         {
-            $$ = astCreate("Leq", @2.first_line, 2, $1, $3);
+            $$ = astCreate("Leq", yylineno, 2, $1, $3);
         }
     | AddExpr { $$ = $1; }
     ;
@@ -284,11 +284,11 @@ DesigExpr
 AddExpr
     : AddExpr MAIS MulExpr
       {
-        $$ = astCreate("Add", @2.first_line, 2, $1, $3);
+        $$ = astCreate("Add", yylineno, 2, $1, $3);
       }
     | AddExpr MENOS MulExpr
       {
-        $$ = astCreate("Sub", @2.first_line, 2, $1, $3);
+        $$ = astCreate("Sub", yylineno, 2, $1, $3);
       }
     | MulExpr { $$ = $1; }
     ;
@@ -297,11 +297,11 @@ AddExpr
 MulExpr
     : MulExpr VEZES UnExpr
       {
-        $$ = astCreate("Mul", @2.first_line, 2, $1, $3);
+        $$ = astCreate("Mul", yylineno, 2, $1, $3);
       }
     | MulExpr DIVIDE UnExpr
       {
-        $$ = astCreate("Div", @2.first_line, 2, $1, $3);
+        $$ = astCreate("Div", yylineno, 2, $1, $3);
       }
     | UnExpr { $$ = $1; }
     ;
@@ -310,11 +310,11 @@ MulExpr
 UnExpr
     : MENOS PrimExpr
       {
-        $$ = astCreate("Neg", @1.first_line, 1, $2);
+        $$ = astCreate("Neg", yylineno, 1, $2);
       }
     | NEG PrimExpr
       {
-        $$ = astCreate("Not", @1.first_line, 1, $2);
+        $$ = astCreate("Not", yylineno, 1, $2);
       }
     | PrimExpr { $$ = $1; }
     ;
@@ -322,26 +322,26 @@ UnExpr
 PrimExpr
     : ID ABREPARENT ListExpr FECHAPARENT
       {
-        ASTNode *nID   = astNewId($1,   @1.first_line);
+        ASTNode *nID   = astNewId($1,   yylineno);
         ASTNode *args  = $3;
-        $$ = astCreate("Call", @1.first_line, 2, nID, args);
+        $$ = astCreate("Call", yylineno, 2, nID, args);
       }
     | ID ABREPARENT FECHAPARENT
       {
-        ASTNode *nID = astNewId($1, @1.first_line);
-        $$ = astCreate("CallNoArgs", @1.first_line, 1, nID);
+        ASTNode *nID = astNewId($1, yylineno);
+        $$ = astCreate("CallNoArgs", yylineno, 1, nID);
       }
     | ID
       {
-        $$ = astNewId($1, @1.first_line);
+        $$ = astNewId($1, yylineno);
       }
     | CARCONST
       {
-        $$ = astNewChar($1, @1.first_line);
+        $$ = astNewChar($1, yylineno);
       }
     | INTCONST
       {
-        $$ = astNewInt($1, @1.first_line);
+        $$ = astNewInt($1, yylineno);
       }
     | ABREPARENT Expr FECHAPARENT
       {
@@ -352,11 +352,11 @@ PrimExpr
 ListExpr
     : Expr
       {
-        $$ = astCreate("ArgList", @1.first_line, 1, $1);
+        $$ = astCreate("ArgList", yylineno, 1, $1);
       }
     | ListExpr VIRGULA Expr
       {
-        $$ = astCreate("ArgList", @2.first_line, 2, $1, $3);
+        $$ = astCreate("ArgList", yylineno, 2, $1, $3);
       }
     ;
 

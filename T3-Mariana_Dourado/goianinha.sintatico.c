@@ -439,15 +439,13 @@ void free (void *); /* INFRINGES ON USER NAME SPACE */
 
 #if (! defined yyoverflow \
      && (! defined __cplusplus \
-         || (defined YYLTYPE_IS_TRIVIAL && YYLTYPE_IS_TRIVIAL \
-             && defined YYSTYPE_IS_TRIVIAL && YYSTYPE_IS_TRIVIAL)))
+         || (defined YYSTYPE_IS_TRIVIAL && YYSTYPE_IS_TRIVIAL)))
 
 /* A type that is properly aligned for any stack member.  */
 union yyalloc
 {
   yy_state_t yyss_alloc;
   YYSTYPE yyvs_alloc;
-  YYLTYPE yyls_alloc;
 };
 
 /* The size of the maximum gap between one aligned stack and the next.  */
@@ -456,9 +454,8 @@ union yyalloc
 /* The size of an array large to enough to hold all stacks, each with
    N elements.  */
 # define YYSTACK_BYTES(N) \
-     ((N) * (YYSIZEOF (yy_state_t) + YYSIZEOF (YYSTYPE) \
-             + YYSIZEOF (YYLTYPE)) \
-      + 2 * YYSTACK_GAP_MAXIMUM)
+     ((N) * (YYSIZEOF (yy_state_t) + YYSIZEOF (YYSTYPE)) \
+      + YYSTACK_GAP_MAXIMUM)
 
 # define YYCOPY_NEEDED 1
 
@@ -788,32 +785,6 @@ enum { YYENOMEM = -2 };
    Use YYerror or YYUNDEF. */
 #define YYERRCODE YYUNDEF
 
-/* YYLLOC_DEFAULT -- Set CURRENT to span from RHS[1] to RHS[N].
-   If N is 0, then set CURRENT to the empty location which ends
-   the previous symbol: RHS[0] (always defined).  */
-
-#ifndef YYLLOC_DEFAULT
-# define YYLLOC_DEFAULT(Current, Rhs, N)                                \
-    do                                                                  \
-      if (N)                                                            \
-        {                                                               \
-          (Current).first_line   = YYRHSLOC (Rhs, 1).first_line;        \
-          (Current).first_column = YYRHSLOC (Rhs, 1).first_column;      \
-          (Current).last_line    = YYRHSLOC (Rhs, N).last_line;         \
-          (Current).last_column  = YYRHSLOC (Rhs, N).last_column;       \
-        }                                                               \
-      else                                                              \
-        {                                                               \
-          (Current).first_line   = (Current).last_line   =              \
-            YYRHSLOC (Rhs, 0).last_line;                                \
-          (Current).first_column = (Current).last_column =              \
-            YYRHSLOC (Rhs, 0).last_column;                              \
-        }                                                               \
-    while (0)
-#endif
-
-#define YYRHSLOC(Rhs, K) ((Rhs)[K])
-
 
 /* Enable debugging if requested.  */
 #if YYDEBUG
@@ -830,63 +801,6 @@ do {                                            \
 } while (0)
 
 
-/* YYLOCATION_PRINT -- Print the location on the stream.
-   This macro was not mandated originally: define only if we know
-   we won't break user code: when these are the locations we know.  */
-
-# ifndef YYLOCATION_PRINT
-
-#  if defined YY_LOCATION_PRINT
-
-   /* Temporary convenience wrapper in case some people defined the
-      undocumented and private YY_LOCATION_PRINT macros.  */
-#   define YYLOCATION_PRINT(File, Loc)  YY_LOCATION_PRINT(File, *(Loc))
-
-#  elif defined YYLTYPE_IS_TRIVIAL && YYLTYPE_IS_TRIVIAL
-
-/* Print *YYLOCP on YYO.  Private, do not rely on its existence. */
-
-YY_ATTRIBUTE_UNUSED
-static int
-yy_location_print_ (FILE *yyo, YYLTYPE const * const yylocp)
-{
-  int res = 0;
-  int end_col = 0 != yylocp->last_column ? yylocp->last_column - 1 : 0;
-  if (0 <= yylocp->first_line)
-    {
-      res += YYFPRINTF (yyo, "%d", yylocp->first_line);
-      if (0 <= yylocp->first_column)
-        res += YYFPRINTF (yyo, ".%d", yylocp->first_column);
-    }
-  if (0 <= yylocp->last_line)
-    {
-      if (yylocp->first_line < yylocp->last_line)
-        {
-          res += YYFPRINTF (yyo, "-%d", yylocp->last_line);
-          if (0 <= end_col)
-            res += YYFPRINTF (yyo, ".%d", end_col);
-        }
-      else if (0 <= end_col && yylocp->first_column < end_col)
-        res += YYFPRINTF (yyo, "-%d", end_col);
-    }
-  return res;
-}
-
-#   define YYLOCATION_PRINT  yy_location_print_
-
-    /* Temporary convenience wrapper in case some people defined the
-       undocumented and private YY_LOCATION_PRINT macros.  */
-#   define YY_LOCATION_PRINT(File, Loc)  YYLOCATION_PRINT(File, &(Loc))
-
-#  else
-
-#   define YYLOCATION_PRINT(File, Loc) ((void) 0)
-    /* Temporary convenience wrapper in case some people defined the
-       undocumented and private YY_LOCATION_PRINT macros.  */
-#   define YY_LOCATION_PRINT  YYLOCATION_PRINT
-
-#  endif
-# endif /* !defined YYLOCATION_PRINT */
 
 
 # define YY_SYMBOL_PRINT(Title, Kind, Value, Location)                    \
@@ -895,7 +809,7 @@ do {                                                                      \
     {                                                                     \
       YYFPRINTF (stderr, "%s ", Title);                                   \
       yy_symbol_print (stderr,                                            \
-                  Kind, Value, Location); \
+                  Kind, Value); \
       YYFPRINTF (stderr, "\n");                                           \
     }                                                                     \
 } while (0)
@@ -907,11 +821,10 @@ do {                                                                      \
 
 static void
 yy_symbol_value_print (FILE *yyo,
-                       yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp)
+                       yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep)
 {
   FILE *yyoutput = yyo;
   YY_USE (yyoutput);
-  YY_USE (yylocationp);
   if (!yyvaluep)
     return;
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
@@ -926,14 +839,12 @@ yy_symbol_value_print (FILE *yyo,
 
 static void
 yy_symbol_print (FILE *yyo,
-                 yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp)
+                 yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep)
 {
   YYFPRINTF (yyo, "%s %s (",
              yykind < YYNTOKENS ? "token" : "nterm", yysymbol_name (yykind));
 
-  YYLOCATION_PRINT (yyo, yylocationp);
-  YYFPRINTF (yyo, ": ");
-  yy_symbol_value_print (yyo, yykind, yyvaluep, yylocationp);
+  yy_symbol_value_print (yyo, yykind, yyvaluep);
   YYFPRINTF (yyo, ")");
 }
 
@@ -966,7 +877,7 @@ do {                                                            \
 `------------------------------------------------*/
 
 static void
-yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp, YYLTYPE *yylsp,
+yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp,
                  int yyrule)
 {
   int yylno = yyrline[yyrule];
@@ -980,8 +891,7 @@ yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp, YYLTYPE *yylsp,
       YYFPRINTF (stderr, "   $%d = ", yyi + 1);
       yy_symbol_print (stderr,
                        YY_ACCESSING_SYMBOL (+yyssp[yyi + 1 - yynrhs]),
-                       &yyvsp[(yyi + 1) - (yynrhs)],
-                       &(yylsp[(yyi + 1) - (yynrhs)]));
+                       &yyvsp[(yyi + 1) - (yynrhs)]);
       YYFPRINTF (stderr, "\n");
     }
 }
@@ -989,7 +899,7 @@ yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp, YYLTYPE *yylsp,
 # define YY_REDUCE_PRINT(Rule)          \
 do {                                    \
   if (yydebug)                          \
-    yy_reduce_print (yyssp, yyvsp, yylsp, Rule); \
+    yy_reduce_print (yyssp, yyvsp, Rule); \
 } while (0)
 
 /* Nonzero means print parse trace.  It is left uninitialized so that
@@ -1030,10 +940,9 @@ int yydebug;
 
 static void
 yydestruct (const char *yymsg,
-            yysymbol_kind_t yykind, YYSTYPE *yyvaluep, YYLTYPE *yylocationp)
+            yysymbol_kind_t yykind, YYSTYPE *yyvaluep)
 {
   YY_USE (yyvaluep);
-  YY_USE (yylocationp);
   if (!yymsg)
     yymsg = "Deleting";
   YY_SYMBOL_PRINT (yymsg, yykind, yyvaluep, yylocationp);
@@ -1049,12 +958,6 @@ int yychar;
 
 /* The semantic value of the lookahead symbol.  */
 YYSTYPE yylval;
-/* Location data for the lookahead symbol.  */
-YYLTYPE yylloc
-# if defined YYLTYPE_IS_TRIVIAL && YYLTYPE_IS_TRIVIAL
-  = { 1, 1, 1, 1 }
-# endif
-;
 /* Number of syntax errors so far.  */
 int yynerrs;
 
@@ -1088,11 +991,6 @@ yyparse (void)
     YYSTYPE *yyvs = yyvsa;
     YYSTYPE *yyvsp = yyvs;
 
-    /* The location stack: array, bottom, top.  */
-    YYLTYPE yylsa[YYINITDEPTH];
-    YYLTYPE *yyls = yylsa;
-    YYLTYPE *yylsp = yyls;
-
   int yyn;
   /* The return value of yyparse.  */
   int yyresult;
@@ -1101,14 +999,10 @@ yyparse (void)
   /* The variables used to return semantic value and location from the
      action routines.  */
   YYSTYPE yyval;
-  YYLTYPE yyloc;
-
-  /* The locations where the error started and ended.  */
-  YYLTYPE yyerror_range[3];
 
 
 
-#define YYPOPSTACK(N)   (yyvsp -= (N), yyssp -= (N), yylsp -= (N))
+#define YYPOPSTACK(N)   (yyvsp -= (N), yyssp -= (N))
 
   /* The number of symbols on the RHS of the reduced rule.
      Keep to zero when no symbol should be popped.  */
@@ -1118,7 +1012,6 @@ yyparse (void)
 
   yychar = YYEMPTY; /* Cause a token to be read.  */
 
-  yylsp[0] = yylloc;
   goto yysetstate;
 
 
@@ -1157,7 +1050,6 @@ yysetstate:
            memory.  */
         yy_state_t *yyss1 = yyss;
         YYSTYPE *yyvs1 = yyvs;
-        YYLTYPE *yyls1 = yyls;
 
         /* Each stack pointer address is followed by the size of the
            data in use in that stack, in bytes.  This used to be a
@@ -1166,11 +1058,9 @@ yysetstate:
         yyoverflow (YY_("memory exhausted"),
                     &yyss1, yysize * YYSIZEOF (*yyssp),
                     &yyvs1, yysize * YYSIZEOF (*yyvsp),
-                    &yyls1, yysize * YYSIZEOF (*yylsp),
                     &yystacksize);
         yyss = yyss1;
         yyvs = yyvs1;
-        yyls = yyls1;
       }
 # else /* defined YYSTACK_RELOCATE */
       /* Extend the stack our own way.  */
@@ -1189,7 +1079,6 @@ yysetstate:
           YYNOMEM;
         YYSTACK_RELOCATE (yyss_alloc, yyss);
         YYSTACK_RELOCATE (yyvs_alloc, yyvs);
-        YYSTACK_RELOCATE (yyls_alloc, yyls);
 #  undef YYSTACK_RELOCATE
         if (yyss1 != yyssa)
           YYSTACK_FREE (yyss1);
@@ -1198,7 +1087,6 @@ yysetstate:
 
       yyssp = yyss + yysize - 1;
       yyvsp = yyvs + yysize - 1;
-      yylsp = yyls + yysize - 1;
 
       YY_IGNORE_USELESS_CAST_BEGIN
       YYDPRINTF ((stderr, "Stack size increased to %ld\n",
@@ -1252,7 +1140,6 @@ yybackup:
          loop in error recovery. */
       yychar = YYUNDEF;
       yytoken = YYSYMBOL_YYerror;
-      yyerror_range[1] = yylloc;
       goto yyerrlab1;
     }
   else
@@ -1286,7 +1173,6 @@ yybackup:
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
   *++yyvsp = yylval;
   YY_IGNORE_MAYBE_UNINITIALIZED_END
-  *++yylsp = yylloc;
 
   /* Discard the shifted token.  */
   yychar = YYEMPTY;
@@ -1320,9 +1206,7 @@ yyreduce:
      GCC warning that YYVAL may be used uninitialized.  */
   yyval = yyvsp[1-yylen];
 
-  /* Default location. */
-  YYLLOC_DEFAULT (yyloc, (yylsp - yylen), yylen);
-  yyerror_range[1] = yyloc;
+
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
@@ -1332,40 +1216,40 @@ yyreduce:
             (yyval.node) = astCreate("Programa", yylineno, 2, (yyvsp[-1].node), (yyvsp[0].node));
             raizAST = (yyval.node);
         }
-#line 1336 "goianinha.sintatico.c"
+#line 1220 "goianinha.sintatico.c"
     break;
 
   case 3: /* DeclFuncVar: Tipo ID DeclVar PONTOVIRGULA DeclFuncVar  */
 #line 64 "goianinha.y"
         {
             ASTNode *nTipo  = astCreate("Tipo", yylineno, 1, (yyvsp[-4].node));
-            ASTNode *nID    = astNewId((yyvsp[-3].string), yylineno);
+            ASTNode *nID    = astNewId((yyvsp[-3].string), (yyvsp[-2].node)->line);
             ASTNode *nDeclV = (yyvsp[-2].node);
             ASTNode *next   = (yyvsp[0].node);
 
-            (yyval.node) = astCreate("DeclVarGlobal", yylineno, 4, nTipo, nID, nDeclV, next);
+            (yyval.node) = astCreate("DeclVarGlobal", (yyvsp[-4].node)->line, 4, nTipo, nID, nDeclV, next);
         }
-#line 1349 "goianinha.sintatico.c"
+#line 1233 "goianinha.sintatico.c"
     break;
 
   case 4: /* DeclFuncVar: Tipo ID DeclFunc DeclFuncVar  */
 #line 73 "goianinha.y"
         {
             ASTNode *nTipo     = astCreate("Tipo", yylineno, 1, (yyvsp[-3].node));
-            ASTNode *nID       = astNewId((yyvsp[-2].string), yylineno);
+            ASTNode *nID       = astNewId((yyvsp[-2].string), (yyvsp[-3].node)->line);
             ASTNode *nParams   = (yyvsp[-1].node);
             ASTNode *nCont     = (yyvsp[0].node);  // corpo
             ASTNode *next      = NULL;
 
-            (yyval.node) = astCreate("DeclFuncGlobal", yylineno, 4, nTipo, nID, nParams, nCont);
+            (yyval.node) = astCreate("DeclFuncGlobal", (yyvsp[-3].node)->line, 4, nTipo, nID, nParams, nCont);
         }
-#line 1363 "goianinha.sintatico.c"
+#line 1247 "goianinha.sintatico.c"
     break;
 
   case 5: /* DeclFuncVar: %empty  */
 #line 82 "goianinha.y"
-                  { (yyval.node) = astCreate("DeclFuncVar", (yyloc).first_line, 0); }
-#line 1369 "goianinha.sintatico.c"
+                  { (yyval.node) = astCreate("DeclFuncVar", yylineno, 0); }
+#line 1253 "goianinha.sintatico.c"
     break;
 
   case 6: /* DeclProg: PROGRAMA Bloco  */
@@ -1374,7 +1258,7 @@ yyreduce:
             ASTNode *nProgTok = astCreate("KW_PROGRAMA", yylineno, 0);
             (yyval.node) = astCreate("DeclProg", yylineno, 2, nProgTok, (yyvsp[0].node));
         }
-#line 1378 "goianinha.sintatico.c"
+#line 1262 "goianinha.sintatico.c"
     break;
 
   case 7: /* DeclVar: VIRGULA ID DeclVar  */
@@ -1383,13 +1267,13 @@ yyreduce:
             ASTNode *nID = astNewId((yyvsp[-1].string), yylineno); ASTNode *nRest = (yyvsp[0].node);
             (yyval.node) = astCreate("DeclVarMulti", yylineno, 2, nID, nRest);
         }
-#line 1387 "goianinha.sintatico.c"
+#line 1271 "goianinha.sintatico.c"
     break;
 
   case 8: /* DeclVar: %empty  */
 #line 99 "goianinha.y"
-                  { (yyval.node) = astCreate("DeclVarMulti", (yyloc).first_line, 0); }
-#line 1393 "goianinha.sintatico.c"
+                  { (yyval.node) = astCreate("DeclVarMulti", yylineno, 0); }
+#line 1277 "goianinha.sintatico.c"
     break;
 
   case 9: /* DeclFunc: ABREPARENT ListaParametros FECHAPARENT Bloco  */
@@ -1398,19 +1282,19 @@ yyreduce:
             ASTNode *nLP = (yyvsp[-2].node); ASTNode *nB = (yyvsp[0].node);
             (yyval.node) = astCreate("DeclFunc", yylineno, 2, nLP, nB);
         }
-#line 1402 "goianinha.sintatico.c"
+#line 1286 "goianinha.sintatico.c"
     break;
 
   case 10: /* ListaParametros: %empty  */
 #line 111 "goianinha.y"
-                  { (yyval.node) = astCreate("ListaParametros", (yyloc).first_line, 0); }
-#line 1408 "goianinha.sintatico.c"
+                  { (yyval.node) = astCreate("ListaParametros", yylineno, 0); }
+#line 1292 "goianinha.sintatico.c"
     break;
 
   case 11: /* ListaParametros: ListaParametrosCont  */
 #line 112 "goianinha.y"
                           { (yyval.node) = (yyvsp[0].node); }
-#line 1414 "goianinha.sintatico.c"
+#line 1298 "goianinha.sintatico.c"
     break;
 
   case 12: /* ListaParametrosCont: Tipo ID  */
@@ -1420,7 +1304,7 @@ yyreduce:
             ASTNode *nID   = astNewId((yyvsp[0].string), yylineno);
             (yyval.node) = astCreate("Param", yylineno, 2, nTipo, nID);
         }
-#line 1424 "goianinha.sintatico.c"
+#line 1308 "goianinha.sintatico.c"
     break;
 
   case 13: /* ListaParametrosCont: Tipo ID VIRGULA ListaParametrosCont  */
@@ -1431,7 +1315,7 @@ yyreduce:
             ASTNode *nRest = (yyvsp[0].node);
             (yyval.node) = astCreate("ParamLista", yylineno, 3, nTipo, nID, nRest);
         }
-#line 1435 "goianinha.sintatico.c"
+#line 1319 "goianinha.sintatico.c"
     break;
 
   case 14: /* Bloco: ABRECHAVE ListaDeclVar ListaComando FECHACHAVE  */
@@ -1439,43 +1323,43 @@ yyreduce:
         {
             (yyval.node) = astCreate("Bloco", yylineno, 2, (yyvsp[-2].node), (yyvsp[-1].node));
         }
-#line 1443 "goianinha.sintatico.c"
+#line 1327 "goianinha.sintatico.c"
     break;
 
   case 15: /* ListaDeclVar: %empty  */
 #line 139 "goianinha.y"
-                  { (yyval.node) = astCreate("ListaDeclVar", (yyloc).first_line, 0); }
-#line 1449 "goianinha.sintatico.c"
+                  { (yyval.node) = astCreate("ListaDeclVar", yylineno, 0); }
+#line 1333 "goianinha.sintatico.c"
     break;
 
   case 16: /* ListaDeclVar: Tipo ID DeclVar PONTOVIRGULA ListaDeclVar  */
 #line 141 "goianinha.y"
         {
             ASTNode *nTipo   = astCreate("Tipo", yylineno, 1, (yyvsp[-4].node));
-            ASTNode *nID     = astNewId((yyvsp[-3].string), yylineno);
+            ASTNode *nID     = astNewId((yyvsp[-3].string), (yyvsp[-2].node)->line);
             ASTNode *nDeclV  = (yyvsp[-2].node);    /* resto DeclVar */
             ASTNode *nResto  = (yyvsp[0].node);    /* continuação ListaDeclVar */
             (yyval.node) = astCreate("DeclVarLocal", yylineno, 4, nTipo, nID, nDeclV, nResto);
         }
-#line 1461 "goianinha.sintatico.c"
+#line 1345 "goianinha.sintatico.c"
     break;
 
   case 17: /* Tipo: INT  */
 #line 151 "goianinha.y"
           { (yyval.node) = astCreate("INT", yylineno, 0); }
-#line 1467 "goianinha.sintatico.c"
+#line 1351 "goianinha.sintatico.c"
     break;
 
   case 18: /* Tipo: CAR  */
 #line 152 "goianinha.y"
           { (yyval.node) = astCreate("CAR", yylineno, 0); }
-#line 1473 "goianinha.sintatico.c"
+#line 1357 "goianinha.sintatico.c"
     break;
 
   case 19: /* ListaComando: Comando  */
 #line 156 "goianinha.y"
               { (yyval.node) = astCreate("ListaComando", yylineno, 1, (yyvsp[0].node)); }
-#line 1479 "goianinha.sintatico.c"
+#line 1363 "goianinha.sintatico.c"
     break;
 
   case 20: /* ListaComando: Comando ListaComando  */
@@ -1483,7 +1367,7 @@ yyreduce:
         {
             (yyval.node) = astCreate("ListaComando", yylineno, 2, (yyvsp[-1].node), (yyvsp[0].node));
         }
-#line 1487 "goianinha.sintatico.c"
+#line 1371 "goianinha.sintatico.c"
     break;
 
   case 21: /* Comando: PONTOVIRGULA  */
@@ -1491,7 +1375,7 @@ yyreduce:
         {
             (yyval.node) = astCreate("NoOp", yylineno, 0);
         }
-#line 1495 "goianinha.sintatico.c"
+#line 1379 "goianinha.sintatico.c"
     break;
 
   case 22: /* Comando: Expr PONTOVIRGULA  */
@@ -1499,7 +1383,7 @@ yyreduce:
         {
             (yyval.node) = astCreate("ExprStmt", yylineno, 1, (yyvsp[-1].node));
         }
-#line 1503 "goianinha.sintatico.c"
+#line 1387 "goianinha.sintatico.c"
     break;
 
   case 23: /* Comando: RETORNE Expr PONTOVIRGULA  */
@@ -1507,7 +1391,7 @@ yyreduce:
         {
             (yyval.node) = astCreate("Return", yylineno, 1, (yyvsp[-1].node));
         }
-#line 1511 "goianinha.sintatico.c"
+#line 1395 "goianinha.sintatico.c"
     break;
 
   case 24: /* Comando: LEIA ID PONTOVIRGULA  */
@@ -1516,7 +1400,7 @@ yyreduce:
             ASTNode *nID = astNewId((yyvsp[-1].string), yylineno);
             (yyval.node) = astCreate("Read", yylineno, 1, nID);
         }
-#line 1520 "goianinha.sintatico.c"
+#line 1404 "goianinha.sintatico.c"
     break;
 
   case 25: /* Comando: ESCREVA Expr PONTOVIRGULA  */
@@ -1524,7 +1408,7 @@ yyreduce:
         {
             (yyval.node) = astCreate("WriteExpr", yylineno, 1, (yyvsp[-1].node));
         }
-#line 1528 "goianinha.sintatico.c"
+#line 1412 "goianinha.sintatico.c"
     break;
 
   case 26: /* Comando: ESCREVA CONSTSTRING PONTOVIRGULA  */
@@ -1533,7 +1417,7 @@ yyreduce:
             ASTNode *nStr = astNewString((yyvsp[-1].string), yylineno);
             (yyval.node) = astCreate("WriteString", yylineno, 1, nStr);
         }
-#line 1537 "goianinha.sintatico.c"
+#line 1421 "goianinha.sintatico.c"
     break;
 
   case 27: /* Comando: NOVALINHA PONTOVIRGULA  */
@@ -1541,7 +1425,7 @@ yyreduce:
         {
             (yyval.node) = astCreate("NewLine", yylineno, 0);
         }
-#line 1545 "goianinha.sintatico.c"
+#line 1429 "goianinha.sintatico.c"
     break;
 
   case 28: /* Comando: SE ABREPARENT Expr FECHAPARENT ENTAO Comando  */
@@ -1549,7 +1433,7 @@ yyreduce:
         {
             (yyval.node) = astCreate("If", yylineno, 2, (yyvsp[-3].node), (yyvsp[0].node));
         }
-#line 1553 "goianinha.sintatico.c"
+#line 1437 "goianinha.sintatico.c"
     break;
 
   case 29: /* Comando: SE ABREPARENT Expr FECHAPARENT ENTAO Comando SENAO Comando  */
@@ -1557,7 +1441,7 @@ yyreduce:
         {
             (yyval.node) = astCreate("IfElse", yylineno, 3, (yyvsp[-5].node), (yyvsp[-2].node), (yyvsp[0].node));
         }
-#line 1561 "goianinha.sintatico.c"
+#line 1445 "goianinha.sintatico.c"
     break;
 
   case 30: /* Comando: ENQUANTO ABREPARENT Expr FECHAPARENT EXECUTE Comando  */
@@ -1565,7 +1449,7 @@ yyreduce:
         {
             (yyval.node) = astCreate("While", yylineno, 2, (yyvsp[-3].node), (yyvsp[0].node));
         }
-#line 1569 "goianinha.sintatico.c"
+#line 1453 "goianinha.sintatico.c"
     break;
 
   case 31: /* Comando: Bloco  */
@@ -1573,7 +1457,7 @@ yyreduce:
         {
             (yyval.node) = astCreate("BlockStmt", yylineno, 1, (yyvsp[0].node));
         }
-#line 1577 "goianinha.sintatico.c"
+#line 1461 "goianinha.sintatico.c"
     break;
 
   case 32: /* Expr: OrExpr  */
@@ -1581,7 +1465,7 @@ yyreduce:
       {
         (yyval.node) = (yyvsp[0].node);
       }
-#line 1585 "goianinha.sintatico.c"
+#line 1469 "goianinha.sintatico.c"
     break;
 
   case 33: /* Expr: ID RECEBE Expr  */
@@ -1591,7 +1475,7 @@ yyreduce:
         ASTNode *rhs  = (yyvsp[0].node);
         (yyval.node) = astCreate("Assign", yylineno, 2, nID, rhs);
       }
-#line 1595 "goianinha.sintatico.c"
+#line 1479 "goianinha.sintatico.c"
     break;
 
   case 34: /* OrExpr: OrExpr OU AndExpr  */
@@ -1599,7 +1483,7 @@ yyreduce:
       {
         (yyval.node) = astCreate("Or", yylineno, 2, (yyvsp[-2].node), (yyvsp[0].node));
       }
-#line 1603 "goianinha.sintatico.c"
+#line 1487 "goianinha.sintatico.c"
     break;
 
   case 35: /* OrExpr: AndExpr  */
@@ -1607,7 +1491,7 @@ yyreduce:
       {
         (yyval.node) = (yyvsp[0].node);
       }
-#line 1611 "goianinha.sintatico.c"
+#line 1495 "goianinha.sintatico.c"
     break;
 
   case 36: /* AndExpr: AndExpr E EqExpr  */
@@ -1615,7 +1499,7 @@ yyreduce:
       {
         (yyval.node) = astCreate("And", yylineno, 2, (yyvsp[-2].node), (yyvsp[0].node));
       }
-#line 1619 "goianinha.sintatico.c"
+#line 1503 "goianinha.sintatico.c"
     break;
 
   case 37: /* AndExpr: EqExpr  */
@@ -1623,7 +1507,7 @@ yyreduce:
       {
         (yyval.node) = (yyvsp[0].node);
       }
-#line 1627 "goianinha.sintatico.c"
+#line 1511 "goianinha.sintatico.c"
     break;
 
   case 38: /* EqExpr: EqExpr EQ DesigExpr  */
@@ -1631,7 +1515,7 @@ yyreduce:
       {
         (yyval.node) = astCreate("Eq", yylineno, 2, (yyvsp[-2].node), (yyvsp[0].node));
       }
-#line 1635 "goianinha.sintatico.c"
+#line 1519 "goianinha.sintatico.c"
     break;
 
   case 39: /* EqExpr: EqExpr NEQ DesigExpr  */
@@ -1639,13 +1523,13 @@ yyreduce:
       {
         (yyval.node) = astCreate("Neq", yylineno, 2, (yyvsp[-2].node), (yyvsp[0].node));
       }
-#line 1643 "goianinha.sintatico.c"
+#line 1527 "goianinha.sintatico.c"
     break;
 
   case 40: /* EqExpr: DesigExpr  */
 #line 260 "goianinha.y"
                 { (yyval.node) = (yyvsp[0].node); }
-#line 1649 "goianinha.sintatico.c"
+#line 1533 "goianinha.sintatico.c"
     break;
 
   case 41: /* DesigExpr: DesigExpr MENOR AddExpr  */
@@ -1653,7 +1537,7 @@ yyreduce:
         {
             (yyval.node) = astCreate("Less", yylineno, 2, (yyvsp[-2].node), (yyvsp[0].node));
         }
-#line 1657 "goianinha.sintatico.c"
+#line 1541 "goianinha.sintatico.c"
     break;
 
   case 42: /* DesigExpr: DesigExpr MAIOR AddExpr  */
@@ -1661,7 +1545,7 @@ yyreduce:
         {
             (yyval.node) = astCreate("Greater", yylineno, 2, (yyvsp[-2].node), (yyvsp[0].node));
         }
-#line 1665 "goianinha.sintatico.c"
+#line 1549 "goianinha.sintatico.c"
     break;
 
   case 43: /* DesigExpr: DesigExpr GEQ AddExpr  */
@@ -1669,7 +1553,7 @@ yyreduce:
         {
             (yyval.node) = astCreate("Geq", yylineno, 2, (yyvsp[-2].node), (yyvsp[0].node));
         }
-#line 1673 "goianinha.sintatico.c"
+#line 1557 "goianinha.sintatico.c"
     break;
 
   case 44: /* DesigExpr: DesigExpr LEQ AddExpr  */
@@ -1677,13 +1561,13 @@ yyreduce:
         {
             (yyval.node) = astCreate("Leq", yylineno, 2, (yyvsp[-2].node), (yyvsp[0].node));
         }
-#line 1681 "goianinha.sintatico.c"
+#line 1565 "goianinha.sintatico.c"
     break;
 
   case 45: /* DesigExpr: AddExpr  */
 #line 281 "goianinha.y"
               { (yyval.node) = (yyvsp[0].node); }
-#line 1687 "goianinha.sintatico.c"
+#line 1571 "goianinha.sintatico.c"
     break;
 
   case 46: /* AddExpr: AddExpr MAIS MulExpr  */
@@ -1691,7 +1575,7 @@ yyreduce:
       {
         (yyval.node) = astCreate("Add", yylineno, 2, (yyvsp[-2].node), (yyvsp[0].node));
       }
-#line 1695 "goianinha.sintatico.c"
+#line 1579 "goianinha.sintatico.c"
     break;
 
   case 47: /* AddExpr: AddExpr MENOS MulExpr  */
@@ -1699,13 +1583,13 @@ yyreduce:
       {
         (yyval.node) = astCreate("Sub", yylineno, 2, (yyvsp[-2].node), (yyvsp[0].node));
       }
-#line 1703 "goianinha.sintatico.c"
+#line 1587 "goianinha.sintatico.c"
     break;
 
   case 48: /* AddExpr: MulExpr  */
 #line 293 "goianinha.y"
               { (yyval.node) = (yyvsp[0].node); }
-#line 1709 "goianinha.sintatico.c"
+#line 1593 "goianinha.sintatico.c"
     break;
 
   case 49: /* MulExpr: MulExpr VEZES UnExpr  */
@@ -1713,7 +1597,7 @@ yyreduce:
       {
         (yyval.node) = astCreate("Mul", yylineno, 2, (yyvsp[-2].node), (yyvsp[0].node));
       }
-#line 1717 "goianinha.sintatico.c"
+#line 1601 "goianinha.sintatico.c"
     break;
 
   case 50: /* MulExpr: MulExpr DIVIDE UnExpr  */
@@ -1721,13 +1605,13 @@ yyreduce:
       {
         (yyval.node) = astCreate("Div", yylineno, 2, (yyvsp[-2].node), (yyvsp[0].node));
       }
-#line 1725 "goianinha.sintatico.c"
+#line 1609 "goianinha.sintatico.c"
     break;
 
   case 51: /* MulExpr: UnExpr  */
 #line 306 "goianinha.y"
              { (yyval.node) = (yyvsp[0].node); }
-#line 1731 "goianinha.sintatico.c"
+#line 1615 "goianinha.sintatico.c"
     break;
 
   case 52: /* UnExpr: MENOS PrimExpr  */
@@ -1735,7 +1619,7 @@ yyreduce:
       {
         (yyval.node) = astCreate("Neg", yylineno, 1, (yyvsp[0].node));
       }
-#line 1739 "goianinha.sintatico.c"
+#line 1623 "goianinha.sintatico.c"
     break;
 
   case 53: /* UnExpr: NEG PrimExpr  */
@@ -1743,13 +1627,13 @@ yyreduce:
       {
         (yyval.node) = astCreate("Not", yylineno, 1, (yyvsp[0].node));
       }
-#line 1747 "goianinha.sintatico.c"
+#line 1631 "goianinha.sintatico.c"
     break;
 
   case 54: /* UnExpr: PrimExpr  */
 #line 319 "goianinha.y"
                { (yyval.node) = (yyvsp[0].node); }
-#line 1753 "goianinha.sintatico.c"
+#line 1637 "goianinha.sintatico.c"
     break;
 
   case 55: /* PrimExpr: ID ABREPARENT ListExpr FECHAPARENT  */
@@ -1759,7 +1643,7 @@ yyreduce:
         ASTNode *args  = (yyvsp[-1].node);
         (yyval.node) = astCreate("Call", yylineno, 2, nID, args);
       }
-#line 1763 "goianinha.sintatico.c"
+#line 1647 "goianinha.sintatico.c"
     break;
 
   case 56: /* PrimExpr: ID ABREPARENT FECHAPARENT  */
@@ -1768,7 +1652,7 @@ yyreduce:
         ASTNode *nID = astNewId((yyvsp[-2].string), yylineno);
         (yyval.node) = astCreate("CallNoArgs", yylineno, 1, nID);
       }
-#line 1772 "goianinha.sintatico.c"
+#line 1656 "goianinha.sintatico.c"
     break;
 
   case 57: /* PrimExpr: ID  */
@@ -1776,7 +1660,7 @@ yyreduce:
       {
         (yyval.node) = astNewId((yyvsp[0].string), yylineno);
       }
-#line 1780 "goianinha.sintatico.c"
+#line 1664 "goianinha.sintatico.c"
     break;
 
   case 58: /* PrimExpr: CARCONST  */
@@ -1784,7 +1668,7 @@ yyreduce:
       {
         (yyval.node) = astNewChar((yyvsp[0].charval), yylineno);
       }
-#line 1788 "goianinha.sintatico.c"
+#line 1672 "goianinha.sintatico.c"
     break;
 
   case 59: /* PrimExpr: INTCONST  */
@@ -1792,7 +1676,7 @@ yyreduce:
       {
         (yyval.node) = astNewInt((yyvsp[0].intval), yylineno);
       }
-#line 1796 "goianinha.sintatico.c"
+#line 1680 "goianinha.sintatico.c"
     break;
 
   case 60: /* PrimExpr: ABREPARENT Expr FECHAPARENT  */
@@ -1800,7 +1684,7 @@ yyreduce:
       {
         (yyval.node) = (yyvsp[-1].node);
       }
-#line 1804 "goianinha.sintatico.c"
+#line 1688 "goianinha.sintatico.c"
     break;
 
   case 61: /* ListExpr: Expr  */
@@ -1808,7 +1692,7 @@ yyreduce:
       {
         (yyval.node) = astCreate("ArgList", yylineno, 1, (yyvsp[0].node));
       }
-#line 1812 "goianinha.sintatico.c"
+#line 1696 "goianinha.sintatico.c"
     break;
 
   case 62: /* ListExpr: ListExpr VIRGULA Expr  */
@@ -1816,11 +1700,11 @@ yyreduce:
       {
         (yyval.node) = astCreate("ArgList", yylineno, 2, (yyvsp[-2].node), (yyvsp[0].node));
       }
-#line 1820 "goianinha.sintatico.c"
+#line 1704 "goianinha.sintatico.c"
     break;
 
 
-#line 1824 "goianinha.sintatico.c"
+#line 1708 "goianinha.sintatico.c"
 
       default: break;
     }
@@ -1841,7 +1725,6 @@ yyreduce:
   yylen = 0;
 
   *++yyvsp = yyval;
-  *++yylsp = yyloc;
 
   /* Now 'shift' the result of the reduction.  Determine what state
      that goes to, based on the state we popped back to and the rule
@@ -1871,7 +1754,6 @@ yyerrlab:
       yyerror (YY_("syntax error"));
     }
 
-  yyerror_range[1] = yylloc;
   if (yyerrstatus == 3)
     {
       /* If just tried and failed to reuse lookahead token after an
@@ -1886,7 +1768,7 @@ yyerrlab:
       else
         {
           yydestruct ("Error: discarding",
-                      yytoken, &yylval, &yylloc);
+                      yytoken, &yylval);
           yychar = YYEMPTY;
         }
     }
@@ -1940,9 +1822,9 @@ yyerrlab1:
       if (yyssp == yyss)
         YYABORT;
 
-      yyerror_range[1] = *yylsp;
+
       yydestruct ("Error: popping",
-                  YY_ACCESSING_SYMBOL (yystate), yyvsp, yylsp);
+                  YY_ACCESSING_SYMBOL (yystate), yyvsp);
       YYPOPSTACK (1);
       yystate = *yyssp;
       YY_STACK_PRINT (yyss, yyssp);
@@ -1952,9 +1834,6 @@ yyerrlab1:
   *++yyvsp = yylval;
   YY_IGNORE_MAYBE_UNINITIALIZED_END
 
-  yyerror_range[2] = yylloc;
-  ++yylsp;
-  YYLLOC_DEFAULT (*yylsp, yyerror_range, 2);
 
   /* Shift the error token.  */
   YY_SYMBOL_PRINT ("Shifting", YY_ACCESSING_SYMBOL (yyn), yyvsp, yylsp);
@@ -1998,7 +1877,7 @@ yyreturnlab:
          user semantic actions for why this is necessary.  */
       yytoken = YYTRANSLATE (yychar);
       yydestruct ("Cleanup: discarding lookahead",
-                  yytoken, &yylval, &yylloc);
+                  yytoken, &yylval);
     }
   /* Do not reclaim the symbols of the rule whose action triggered
      this YYABORT or YYACCEPT.  */
@@ -2007,7 +1886,7 @@ yyreturnlab:
   while (yyssp != yyss)
     {
       yydestruct ("Cleanup: popping",
-                  YY_ACCESSING_SYMBOL (+*yyssp), yyvsp, yylsp);
+                  YY_ACCESSING_SYMBOL (+*yyssp), yyvsp);
       YYPOPSTACK (1);
     }
 #ifndef yyoverflow
